@@ -4,7 +4,7 @@
     define('DB_HOST', 'localhost');
     define('DB_NAME', 'dbGestionJL');
     define('DB_USER', 'postgres');
-    define('DB_PASSWORD', 'epis2025');
+    define('DB_PASSWORD', 'upt2025');
     define('DB_PORT', '5432');
 
     // Configuración general
