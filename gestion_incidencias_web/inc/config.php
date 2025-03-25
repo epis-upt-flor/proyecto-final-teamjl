@@ -1,12 +1,11 @@
 <?php
     // inc/config.php
 
-    // Parámetros de conexión actualizados para NeonTech PostgreSQL
-    define('DB_HOST', 'ep-still-unit-a8b5odr0-pooler.eastus2.azure.neon.tech');            // Ejemplo: "neon-host.example.com"
-    define('DB_NAME', 'dbgestionf');            // Nombre de la base de datos en NeonTech
-    define('DB_USER', 'dbgestionf_owner');                // Usuario proporcionado por NeonTech
-    define('DB_PASSWORD', 'npg_7zwC5akVZiox');         // Contraseña asignada
-    define('DB_PORT', '5432');                           // Puerto (normalmente 5432)
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'dbGestionJL');
+    define('DB_USER', 'postgres');
+    define('DB_PASSWORD', 'upt2025');
+    define('DB_PORT', '5432');
 
     // Configuración general
     define('BASE_URL', 'http://localhost:8080/ProyectoGestiónIncidenciasV2/gestion_incidencias_web/api'); // URL base del proyecto
