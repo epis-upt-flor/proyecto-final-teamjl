@@ -16,7 +16,7 @@
             $error = "El nombre debe tener al menos 3 letras y solo contener caracteres alfabéticos.";
         }elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
             $error = "El correo no es válido.";
-        }elseif (!preg_match("/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+        }elseif (!preg_match("/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/", $password)) {
             $error = "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.";
         }else {
             $db = new Database();

@@ -8,7 +8,7 @@
     define('DB_PORT', '5432');
 
     // Configuración general
-    define('BASE_URL', 'http://localhost:8080/ProyectoGestiónIncidenciasV2/gestion_incidencias_web/api'); // URL base del proyecto
+    define('BASE_URL', 'http://localhost:8080/proyecto-final-teamjl/gestion_incidencias_web/api'); // URL base del proyecto
 
     // Configurar la zona horaria
     date_default_timezone_set('America/Lima');
