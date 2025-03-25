@@ -1,10 +1,11 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $port = "5432";
-    private $dbname = "dbGestionJL";
-    private $user = "postgres";
-    private $password = "upt2025";
+    // Actualiza con los datos de conexión de NeonTech PostgreSQL
+    private $host = "ep-still-unit-a8b5odr0-pooler.eastus2.azure.neon.tech";       // Ejemplo: "neon-host.example.com"
+    private $port = "5432";                     // Normalmente es el 5432
+    private $dbname = "dbgestionf";      // Nombre de tu base de datos en NeonTech
+    private $user = "dbgestionf_owner";           // Usuario proporcionado por NeonTech
+    private $password = "npg_7zwC5akVZiox";     // Contraseña asignada
     private $conn;
 
     public function connect() {
