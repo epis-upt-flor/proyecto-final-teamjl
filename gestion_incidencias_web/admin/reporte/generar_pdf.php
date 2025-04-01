@@ -1,6 +1,6 @@
 <?php
 require_once("../../inc/db.php");
-require_once("fpdf/fpdf.php"); // ← Carga manual de la clase FPDF
+require_once("fpdf/fpdf.php");
 
 $inicio = $_GET['inicio'] ?? date('Y-m-01');
 $fin = $_GET['fin'] ?? date('Y-m-d');
@@ -15,7 +15,7 @@ $reporte = $pdo->prepare("
 ");
 $reporte->execute(['inicio' => $inicio, 'fin' => $fin]);
 
-$pdf = new FPDF(); // ← ya no usamos namespace
+$pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 14);
 $pdf->Cell(0, 10, 'Reporte General de Incidencias', 0, 1, 'C');

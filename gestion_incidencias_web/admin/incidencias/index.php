@@ -1,63 +1,74 @@
 <?php
-require_once("../../inc/auth.php");
-require_once("../../inc/db.php");
-require_once("../../inc/config.php");
-require_once("../../inc/header.php");
+require_once("../../inc/protect.php");
 ?>
 
-<h2>📋 Lista de Incidencias Reportadas</h2>
-<p>Estas incidencias fueron enviadas por ciudadanos desde la app móvil. Puedes revisarlas y asignarlas a un empleado.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Incidencias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Todas las Incidencias Reportadas</h2>
 
-<?php
-try {
-    $stmt = $pdo->query("
-        SELECT i.id, ti.nombre AS tipo, i.fecha_reporte, ei.nombre AS estado, 
-               i.latitud, i.longitud
-        FROM incidencia i
-        JOIN tipo_incidencia ti ON i.tipo_id = ti.id
-        JOIN estado_incidencia ei ON i.estado_id = ei.id
-        ORDER BY i.fecha_reporte DESC
-    ");
-    $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    echo "<p>Error al cargar incidencias: " . $e->getMessage() . "</p>";
-}
-?>
-
-<?php if (!empty($incidencias)): ?>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th>Ubicación</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($incidencias as $inc): ?>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white">
+            <thead class="table-light">
                 <tr>
-                    <td>#<?php echo $inc['id']; ?></td>
-                    <td><?php echo htmlspecialchars($inc['tipo']); ?></td>
-                    <td><?php echo $inc['fecha_reporte']; ?></td>
-                    <td><?php echo $inc['estado']; ?></td>
-                    <td>
-                        Lat: <?php echo $inc['latitud']; ?><br>
-                        Lon: <?php echo $inc['longitud']; ?><br>
-                        <a href="https://www.google.com/maps?q=<?php echo $inc['latitud'] . ',' . $inc['longitud']; ?>" target="_blank">Ver en mapa</a>
-                    </td>
-                    <td>
-                        <a href="ver.php?id=<?php echo $inc['id']; ?>">🔎 Ver</a> |
-                        <a href="asignar.php?id=<?php echo $inc['id']; ?>">👷 Asignar</a>
-                    </td>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th>Ubicación</th>
+                    <th>Fecha</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php else: ?>
-    <p>No se encontraron incidencias registradas.</p>
-<?php endif; ?>
+            </thead>
+            <tbody id="tabla-incidencias">
+                <tr><td colspan="7" class="text-center">Cargando...</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-<?php require_once("../../inc/footer.php"); ?>
+    <div class="text-center mt-4">
+        <a href="../dashboard/" class="btn btn-outline-primary">← Volver al Dashboard</a>
+    </div>
+</div>
+
+<script>
+    async function cargarIncidencias() {
+        try {
+            const res = await fetch("http://localhost:8080/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_dashboard/incidencias.php");
+            const json = await res.json();
+
+            const cuerpo = document.getElementById("tabla-incidencias");
+            cuerpo.innerHTML = "";
+
+            if (!json.success) {
+                cuerpo.innerHTML = `<tr><td colspan="7" class="text-danger text-center">${json.message}</td></tr>`;
+                return;
+            }
+
+            json.data.forEach(inc => {
+                const fila = `
+                    <tr>
+                        <td>${inc.id}</td>
+                        <td>${inc.tipo}</td>
+                        <td>${inc.estado}</td>
+                        <td>${inc.descripcion}</td>
+                        <td>${inc.latitud}, ${inc.longitud}</td>
+                        <td>${inc.fecha_reporte}</td>
+                    </tr>
+                `;
+                cuerpo.innerHTML += fila;
+            });
+        } catch (error) {
+            document.getElementById("tabla-incidencias").innerHTML = `<tr><td colspan="7" class="text-danger text-center">Error de conexión al servidor</td></tr>`;
+        }
+    }
+
+    cargarIncidencias();
+</script>
+</body>
+</html>

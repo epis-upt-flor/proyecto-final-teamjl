@@ -29,7 +29,7 @@
         {
             $response = ['success' => true];
             if (!empty($message)) $response['message'] = $message;
-            if (!empty($data)) $response['data'] = $data;
+            $response['data'] = $data;
     
             self::json($response, $code);
         }

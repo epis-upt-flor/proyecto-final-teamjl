@@ -1,68 +1,77 @@
 <?php
-require_once("../../inc/auth.php");
-require_once("../../inc/db.php");
-
-$fecha_inicio = $_GET['inicio'] ?? date('Y-m-01');
-$fecha_fin = $_GET['fin'] ?? date('Y-m-d');
-
-// Consulta resumen por estado
-$resumen = $pdo->prepare("
-    SELECT ei.nombre AS estado, COUNT(*) AS total
-    FROM incidencia i
-    JOIN estado_incidencia ei ON i.estado_id = ei.id
-    WHERE i.fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY ei.nombre
-");
-$resumen->execute(['inicio' => $fecha_inicio, 'fin' => $fecha_fin]);
-$datos_estado = $resumen->fetchAll(PDO::FETCH_ASSOC);
-
-// Consulta resumen por tipo
-$tipos = $pdo->prepare("
-    SELECT ti.nombre AS tipo, COUNT(*) AS total
-    FROM incidencia i
-    JOIN tipo_incidencia ti ON i.tipo_id = ti.id
-    WHERE i.fecha_reporte BETWEEN :inicio AND :fin
-    GROUP BY ti.nombre
-");
-$tipos->execute(['inicio' => $fecha_inicio, 'fin' => $fecha_fin]);
-$datos_tipo = $tipos->fetchAll(PDO::FETCH_ASSOC);
+require_once("../../inc/protect.php");
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reporte General</title>
+    <title>Reportes Estadísticos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
 </head>
-<body>
-    <h2>Reporte General de Incidencias</h2>
-    <a href="../dashboard/index.php">← Volver al Dashboard</a><br><br>
+<body class="bg-light">
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Reportes y Estadísticas</h2>
 
-    <form method="GET">
-        <label>Desde:</label>
-        <input type="date" name="inicio" value="<?php echo $fecha_inicio; ?>" required>
-        <label>Hasta:</label>
-        <input type="date" name="fin" value="<?php echo $fecha_fin; ?>" required>
-        <button type="submit">Filtrar</button>
-    </form>
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h5 class="text-center">📊 Incidencias por Estado</h5>
+            <canvas id="graficoEstado"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h5 class="text-center">📌 Incidencias por Tipo</h5>
+            <canvas id="graficoTipo"></canvas>
+        </div>
+    </div>
 
-    <h3>Resumen por Estado</h3>
-    <ul>
-        <?php foreach ($datos_estado as $row): ?>
-            <li><?php echo $row['estado']; ?>: <strong><?php echo $row['total']; ?></strong></li>
-        <?php endforeach; ?>
-    </ul>
+    <div class="text-center">
+        <a href="../dashboard/" class="btn btn-outline-primary">← Volver al Dashboard</a>
+        <button class="btn btn-outline-success mx-2" disabled>📄 Descargar PDF (Aún no)</button>
+        <button class="btn btn-outline-secondary mx-2" disabled>📊 Exportar Excel (Aún no)</button>
+    </div>
+</div>
 
-    <h3>Resumen por Tipo de Incidencia</h3>
-    <ul>
-        <?php foreach ($datos_tipo as $row): ?>
-            <li><?php echo $row['tipo']; ?>: <strong><?php echo $row['total']; ?></strong></li>
-        <?php endforeach; ?>
-    </ul>
+<script>
+async function cargarReportes() {
+    const res = await fetch("http://localhost:8080/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_dashboard/resumen_estadistico.php");
+    const json = await res.json();
 
-    <hr>
-    <h3>Exportar Reporte</h3>
-    <a href="generar_pdf.php?inicio=<?php echo $fecha_inicio; ?>&fin=<?php echo $fecha_fin; ?>" target="_blank">📄 Generar PDF</a><br>
-    <a href="generar_excel.php?inicio=<?php echo $fecha_inicio; ?>&fin=<?php echo $fecha_fin; ?>">📊 Generar Excel</a>
+    if (!json.success) {
+        alert(json.message);
+        return;
+    }
+
+    const estados = json.data.por_estado.map(e => e.estado);
+    const totalEstados = json.data.por_estado.map(e => e.total);
+
+    new Chart(document.getElementById('graficoEstado'), {
+        type: 'doughnut',
+        data: {
+            labels: estados,
+            datasets: [{
+                label: 'Cantidad',
+                data: totalEstados
+            }]
+        }
+    });
+
+    const tipos = json.data.por_tipo.map(t => t.tipo);
+    const totalTipos = json.data.por_tipo.map(t => t.total);
+
+    new Chart(document.getElementById('graficoTipo'), {
+        type: 'bar',
+        data: {
+            labels: tipos,
+            datasets: [{
+                label: 'Cantidad',
+                data: totalTipos
+            }]
+        }
+    });
+}
+
+cargarReportes();
+</script>
 </body>
 </html>

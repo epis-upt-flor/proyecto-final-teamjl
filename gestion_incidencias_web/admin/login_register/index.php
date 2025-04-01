@@ -90,6 +90,8 @@ if (isset($_GET['error'])) {
         <input type="password" name="password" placeholder="Contraseña" required>
         <input type="submit" value="Ingresar">
     </form>
+    <br />
+    <a class="link" href="register.php">← ¿No tienes una cuenta? Regístrate ahora</a>
 </div>
 </body>
 </html>
