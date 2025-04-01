@@ -14,7 +14,7 @@
                 empty($data['latitud']) ||
                 empty($data['longitud']) ||
                 empty($data['descripcion']) ||
-                empty($data['foto_url']) // Se asume que ya fue subida y enviada como URL o path
+                empty($data['foto_url'])
             ) {
                 Response::error("Todos los campos son obligatorios", 422);
             }

@@ -1,23 +1,21 @@
 <?php
 session_start();
 
-// Redirigir si ya hay sesión activa
 if (isset($_SESSION['admin_id'])) {
     header("Location: ../dashboard/index.php");
     exit();
 }
 
 $mensaje = '';
-$tipo_mensaje = ''; // success | error
+$tipo_mensaje = '';
 
-// Verificar si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = trim($_POST['nombre'] ?? '');
     $apellido = trim($_POST['apellido'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    // Validar campos
+    
     if (empty($nombre) || empty($apellido) || empty($email) || empty($password)) {
         $mensaje = 'Todos los campos son obligatorios.';
         $tipo_mensaje = 'error';
@@ -29,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'password' => $password
         ]);
 
-        // Consumir el endpoint de registro
         $ch = curl_init('http://localhost:8080/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_register.php');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);

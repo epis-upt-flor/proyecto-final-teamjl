@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Si ya hay sesión iniciada, redirigir al dashboard
 if (isset($_SESSION['admin_id'])) {
     header("Location: ../dashboard/index.php");
     exit();
 }
 
-// Capturar error si viene desde procesar_login.php
 $error_message = '';
 if (isset($_GET['error'])) {
     switch ($_GET['error']) {

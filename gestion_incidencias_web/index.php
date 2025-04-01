@@ -1,8 +1,3 @@
-<?php
-    // index.php
-    session_start();
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,6 +5,6 @@
 </head>
 <body>
     <h1>Bienvenido al sistema de gestión de incidencias</h1>
-    <a href="admin/login_register/login.php">Ingresar como Administrador</a>
+    <a href="admin/login_register/index.php">Ingresar como Administrador</a>
 </body>
 </html>

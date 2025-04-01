@@ -12,10 +12,8 @@ if (!isset($_GET['id'])) {
 
 $incidencia_id = $_GET['id'];
 
-// Obtener lista de empleados
 $empleados = $pdo->query("SELECT id, nombre, apellido FROM empleado ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener asignación actual si existe
 $stmt = $pdo->prepare("SELECT asignado_a FROM incidencia WHERE id = :id");
 $stmt->execute(['id' => $incidencia_id]);
 $incidencia = $stmt->fetch(PDO::FETCH_ASSOC);

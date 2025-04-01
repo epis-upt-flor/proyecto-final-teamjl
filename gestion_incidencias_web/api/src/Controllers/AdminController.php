@@ -59,7 +59,6 @@
             try {
                 $pdo = Database::getInstance();
         
-                // Verificar si ya existe
                 $stmt = $pdo->prepare("SELECT id FROM administrador WHERE email = :email");
                 $stmt->execute(['email' => $email]);
         
@@ -67,10 +66,8 @@
                     Response::error("Ya existe un administrador con ese correo", 409);
                 }
         
-                // Hashear
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
         
-                // Insertar
                 $stmt = $pdo->prepare("
                     INSERT INTO administrador (nombre, apellido, email, password)
                     VALUES (:nombre, :apellido, :email, :password)
