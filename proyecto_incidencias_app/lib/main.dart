@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/ciudadano_screen.dart'; // Asegúrate de importar esta pantalla
+import 'screens/ciudadano_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -70,7 +70,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                // Botón "Reportar Incidencia"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -95,7 +94,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Botón "Iniciar Sesión"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -120,7 +118,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Botón "Registrarse"
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

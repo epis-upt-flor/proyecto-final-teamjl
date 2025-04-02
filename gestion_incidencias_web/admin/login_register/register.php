@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'password' => $password
         ]);
 
-        $ch = curl_init('http://localhost:8080/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_register.php');
+        $ch = curl_init('http://localhost/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_register.php');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
