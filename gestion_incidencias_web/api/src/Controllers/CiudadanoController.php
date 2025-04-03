@@ -1,53 +1,55 @@
 <?php
-    namespace App\Controllers;
+namespace App\Controllers;
 
-    use App\Core\Response;
-    use App\Core\Database;
-    use Exception;
+use App\Core\Response;
+use App\Core\Database;
+use Exception;
 
-    class CiudadanoController
+class CiudadanoController
+{
+    public static function registrarIncidencia(array $data): void
     {
-        public static function registrarIncidencia(array $data): void
-        {
-            if (
-                empty($data['tipo_incidencia_id']) ||
-                empty($data['latitud']) ||
-                empty($data['longitud']) ||
-                empty($data['descripcion']) ||
-                empty($data['foto_url'])
-            ) {
-                Response::error("Todos los campos son obligatorios", 422);
-            }
+        if (
+            empty($data['tipo']) ||
+            empty($data['latitud']) ||
+            empty($data['longitud']) ||
+            empty($data['descripcion']) ||
+            empty($data['foto'])
+        ) {
+            Response::error("Todos los campos son obligatorios", 422);
+        }
 
-            $tipo = $data['tipo_incidencia_id'];
-            $lat = $data['latitud'];
-            $lng = $data['longitud'];
-            $descripcion = $data['descripcion'];
-            $foto = $data['foto_url'];
-            $fecha = date("Y-m-d");
-            $hora = date("H:i:s");
+       
+        $tipo = $data['tipo'];
+        $lat = $data['latitud'];
+        $lng = $data['longitud'];
+        $descripcion = $data['descripcion'];
+        $foto = $data['foto'];
+        $fecha = date("Y-m-d H:i:s");
 
-            try {
-                $pdo = Database::getInstance();
+        try {
+            $pdo = Database::getInstance();
 
-                $stmt = $pdo->prepare("
-                    INSERT INTO incidencia (tipo_incidencia_id, latitud, longitud, descripcion, foto_url, fecha_reporte, hora_reporte, estado_id)
-                    VALUES (:tipo, :lat, :lng, :descripcion, :foto, :fecha, :hora, 1) -- estado 1 = Pendiente
-                ");
-                $stmt->execute([
-                    'tipo' => $tipo,
-                    'lat' => $lat,
-                    'lng' => $lng,
-                    'descripcion' => $descripcion,
-                    'foto' => $foto,
-                    'fecha' => $fecha,
-                    'hora' => $hora
-                ]);
+            $stmt = $pdo->prepare("
+                INSERT INTO incidencia (
+                    tipo, descripcion, foto, latitud, longitud, fecha_reporte, estado_id
+                ) VALUES (
+                    :tipo, :descripcion, :foto, :lat, :lng, :fecha, 1
+                )
+            ");
 
-                Response::success([], "Incidencia reportada correctamente.");
-            } catch (Exception $e) {
-                Response::error("Error al registrar la incidencia: " . $e->getMessage(), 500);
-            }
+            $stmt->execute([
+                'tipo' => $tipo,
+                'descripcion' => $descripcion,
+                'foto' => $foto,
+                'lat' => $lat,
+                'lng' => $lng,
+                'fecha' => $fecha
+            ]);
+
+            Response::success([], "Incidencia reportada correctamente.");
+        } catch (Exception $e) {
+            Response::error("Error al registrar la incidencia: " . $e->getMessage(), 500);
         }
     }
-?>
+}
