@@ -1,94 +1,99 @@
 <?php
-
 namespace App\Controllers;
 
-use App\Core\Database;
+use App\Services\EmpleadoService;
 use App\Core\Response;
-use App\Core\Auth;
-use PDOException;
 
 class EmpleadoController
 {
     public static function registrar(array $data): void
     {
-        if (
-            empty($data['dni']) ||
-            empty($data['nombre']) ||
-            empty($data['apellido']) ||
-            empty($data['email']) ||
-            empty($data['password'])
-        ) {
-            Response::error("Todos los campos son obligatorios", 422);
-        }
-
-        $dni = trim($data['dni']);
-        $nombre = trim($data['nombre']);
-        $apellido = trim($data['apellido']);
-        $email = trim($data['email']);
-        $password = trim($data['password']);
-
         try {
-            $pdo = Database::getInstance();
-
-            $check = $pdo->prepare("SELECT id FROM empleado WHERE email = :email OR dni = :dni");
-            $check->execute(['email' => $email, 'dni' => $dni]);
-
-            if ($check->fetch()) {
-                Response::error("El correo o DNI ya está registrado", 409);
+            $nombre = trim($data['nombre'] ?? '');
+            $apellido = trim($data['apellido'] ?? '');
+            $dni = trim($data['dni'] ?? '');
+            $email = trim($data['email'] ?? '');
+            $password = trim($data['password'] ?? '');
+    
+            if (empty($nombre) || empty($apellido) || empty($dni) || empty($email) || empty($password)) {
+                \App\Core\Response::error("Todos los campos son obligatorios", 422);
             }
-
+    
+            $pdo = \App\Core\Database::getInstance();
+    
+            $stmt = $pdo->prepare("SELECT id FROM empleado WHERE dni = :dni OR email = :email");
+            $stmt->execute(['dni' => $dni, 'email' => $email]);
+            if ($stmt->fetch()) {
+                \App\Core\Response::error("Ya existe un empleado con ese correo o DNI", 409);
+            }
+    
             $hashed = password_hash($password, PASSWORD_DEFAULT);
-
+    
             $insert = $pdo->prepare("
-                INSERT INTO empleado (dni, nombre, apellido, email, password)
-                VALUES (:dni, :nombre, :apellido, :email, :password)
+                INSERT INTO empleado (nombre, apellido, dni, email, password)
+                VALUES (:nombre, :apellido, :dni, :email, :password)
             ");
             $insert->execute([
-                'dni' => $dni,
                 'nombre' => $nombre,
                 'apellido' => $apellido,
+                'dni' => $dni,
                 'email' => $email,
                 'password' => $hashed
             ]);
-
-            Response::success([], "Empleado registrado correctamente");
-        } catch (PDOException $e) {
-            Response::error("Error en el registro: " . $e->getMessage(), 500);
+    
+            \App\Core\Response::success([], "Empleado registrado correctamente");
+        } catch (\Exception $e) {
+            \App\Core\Response::error("Error al registrar: " . $e->getMessage(), 500);
         }
-    }
+    }    
 
     public static function login(array $data): void
     {
-        if (empty($data['email']) || empty($data['password'])) {
-            Response::error("Correo y contraseña son obligatorios", 422);
-        }
-
-        $email = trim($data['email']);
-        $password = trim($data['password']);
-
         try {
-            $pdo = Database::getInstance();
-
-            $stmt = $pdo->prepare("SELECT * FROM empleado WHERE email = :email");
+            $email = trim($data['email'] ?? '');
+            $password = trim($data['password'] ?? '');
+    
+            if (empty($email) || empty($password)) {
+                \App\Core\Response::error("Correo y contraseña obligatorios", 422);
+            }
+    
+            $pdo = \App\Core\Database::getInstance();
+            $stmt = $pdo->prepare("SELECT id, nombre, apellido, email, password FROM empleado WHERE email = :email");
             $stmt->execute(['email' => $email]);
             $empleado = $stmt->fetch();
-
+    
             if (!$empleado || !password_verify($password, $empleado['password'])) {
-                Response::error("Credenciales inválidas", 401);
+                \App\Core\Response::error("Credenciales inválidas", 401);
             }
-
-            $token = Auth::generarToken([
-                'empleado_id' => $empleado['id'],
-                'nombre' => $empleado['nombre']
+    
+            $token = \App\Core\Auth::generarToken([
+                'id' => $empleado['id'],
+                'nombre' => $empleado['nombre'],
+                'apellido' => $empleado['apellido'],
+                'email' => $empleado['email']
             ]);
+    
+            \App\Core\Response::success([
+                'empleado' => [
+                    'id' => $empleado['id'],
+                    'nombre' => $empleado['nombre'],
+                    'apellido' => $empleado['apellido'],
+                    'email' => $empleado['email']
+                ],
+                'token' => $token
+            ], "Login exitoso");
+        } catch (\Exception $e) {
+            \App\Core\Response::error("Error al iniciar sesión: " . $e->getMessage(), 500);
+        }
+    }    
 
-            Response::success([
-                'token' => $token,
-                'empleado_id' => $empleado['id'],
-                'nombre' => $empleado['nombre']
-            ], "Inicio de sesión exitoso");
-        } catch (PDOException $e) {
-            Response::error("Error interno: " . $e->getMessage(), 500);
+    public static function listar(): void
+    {
+        try {
+            $empleados = EmpleadoService::obtenerTodos();
+            Response::success($empleados, "Empleados encontrados");
+        } catch (\Exception $e) {
+            Response::error("Error al obtener empleados: " . $e->getMessage(), 500);
         }
     }
 }
