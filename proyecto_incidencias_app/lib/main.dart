@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/ciudadano_screen.dart';
+// Reemplazamos el anterior:
+import 'screens/ciudadano_home.dart'; // Nuevo con menú inferior
 
 void main() {
   runApp(const MainApp());
@@ -9,7 +10,7 @@ void main() {
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +27,7 @@ class MainApp extends StatelessWidget {
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
+                // Botón "Reportar Incidencia"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -83,7 +85,7 @@ class WelcomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CiudadanoScreen(user: {}),
+                        builder: (context) => const CiudadanoHome(user: {}),
                       ),
                     );
                   },
@@ -94,6 +96,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                // Botón "Iniciar Sesión"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -118,6 +121,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                // Botón "Registrarse"
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
