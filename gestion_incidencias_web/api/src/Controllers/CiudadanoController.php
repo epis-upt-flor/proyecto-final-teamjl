@@ -13,28 +13,27 @@ class CiudadanoController
             empty($data['tipo']) ||
             empty($data['latitud']) ||
             empty($data['longitud']) ||
-            empty($data['descripcion']) ||
-            empty($data['foto'])
+            empty($data['descripcion'])
         ) {
             Response::error("Todos los campos son obligatorios", 422);
         }
 
-       
         $tipo = $data['tipo'];
         $lat = $data['latitud'];
         $lng = $data['longitud'];
         $descripcion = $data['descripcion'];
-        $foto = $data['foto'];
+        $foto = $data['foto'] ?? null; 
         $fecha = date("Y-m-d H:i:s");
+        $zona = $data['zona'] ?? 'Zona no disponible';
 
         try {
             $pdo = Database::getInstance();
 
             $stmt = $pdo->prepare("
                 INSERT INTO incidencia (
-                    tipo, descripcion, foto, latitud, longitud, fecha_reporte, estado_id
+                    tipo, descripcion, foto, latitud, longitud, fecha_reporte, estado_id, zona
                 ) VALUES (
-                    :tipo, :descripcion, :foto, :lat, :lng, :fecha, 1
+                    :tipo, :descripcion, :foto, :lat, :lng, :fecha, 1, :zona
                 )
             ");
 
@@ -44,7 +43,8 @@ class CiudadanoController
                 'foto' => $foto,
                 'lat' => $lat,
                 'lng' => $lng,
-                'fecha' => $fecha
+                'fecha' => $fecha,
+                'zona' => $zona
             ]);
 
             Response::success([], "Incidencia reportada correctamente.");

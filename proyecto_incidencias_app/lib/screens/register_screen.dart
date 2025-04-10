@@ -9,9 +9,9 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  String dni = ''; // Nuevo campo para DNI
+  String dni = '';
   String name = '';
-  String surname = ''; // Cambié el nombre de 'apellido' a 'surname' para más claridad
+  String surname = '';
   String email = '';
   String password = '';
   bool isLoading = false;

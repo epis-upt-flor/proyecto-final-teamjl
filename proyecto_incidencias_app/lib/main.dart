@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
-// Reemplazamos el anterior:
-import 'screens/ciudadano_home.dart'; // Nuevo con menú inferior
+import 'screens/ciudadano_home.dart';
 
 void main() {
   runApp(const MainApp());
@@ -96,7 +95,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Botón "Iniciar Sesión"
+                // Botón "Iniciar Sesion"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

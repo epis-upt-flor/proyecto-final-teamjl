@@ -14,10 +14,10 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
   int _selectedIndex = 0;
 
   static final List<Widget> _screens = <Widget>[
-    ReportarScreen(), // Primera vista: formulario y mapa
-    Center(child: Text('Historial')), // Placeholder
-    Center(child: Text('Notificaciones')), // Placeholder
-    Center(child: Text('Perfil')), // Placeholder
+    ReportarScreen(),
+    Center(child: Text('Historial')),
+    Center(child: Text('Notificaciones')),
+    Center(child: Text('Perfil')),
   ];
 
   void _onItemTapped(int index) {

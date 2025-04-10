@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../main.dart'; // Importa para acceder a WelcomeScreen
+import '../main.dart';
 
 class EmpleadoScreen extends StatelessWidget {
   final Map<String, dynamic> user;
