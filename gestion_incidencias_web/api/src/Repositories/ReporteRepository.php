@@ -21,9 +21,10 @@ class ReporteRepository
     {
         $pdo = Database::getInstance();
         $sql = "
-            SELECT tipo, COUNT(*) AS total
-            FROM incidencia
-            GROUP BY tipo
+            SELECT ti.nombre AS tipo, COUNT(*) AS total
+            FROM incidencia i
+            INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
+            GROUP BY ti.nombre
         ";
         return $pdo->query($sql)->fetchAll();
     }

@@ -10,7 +10,7 @@ class CiudadanoController
     public static function registrarIncidencia(array $data): void
     {
         if (
-            empty($data['tipo']) ||
+            empty($data['tipo_id']) ||
             empty($data['latitud']) ||
             empty($data['longitud']) ||
             empty($data['descripcion'])
@@ -18,7 +18,7 @@ class CiudadanoController
             Response::error("Todos los campos son obligatorios", 422);
         }
 
-        $tipo = $data['tipo'];
+        $tipo_id = $data['tipo_id'];
         $lat = $data['latitud'];
         $lng = $data['longitud'];
         $descripcion = $data['descripcion'];
@@ -31,14 +31,14 @@ class CiudadanoController
 
             $stmt = $pdo->prepare("
                 INSERT INTO incidencia (
-                    tipo, descripcion, foto, latitud, longitud, fecha_reporte, estado_id, zona
+                    tipo_id, descripcion, foto, latitud, longitud, fecha_reporte, estado_id, zona
                 ) VALUES (
-                    :tipo, :descripcion, :foto, :lat, :lng, :fecha, 1, :zona
+                    :tipo_id, :descripcion, :foto, :lat, :lng, :fecha, 1, :zona
                 )
             ");
 
             $stmt->execute([
-                'tipo' => $tipo,
+                'tipo_id' => $tipo_id,
                 'descripcion' => $descripcion,
                 'foto' => $foto,
                 'lat' => $lat,
