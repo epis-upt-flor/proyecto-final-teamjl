@@ -1,55 +1,8 @@
 <?php
 session_start();
-
 if (isset($_SESSION['admin_id'])) {
     header("Location: ../dashboard/index.php");
     exit();
-}
-
-$mensaje = '';
-$tipo_mensaje = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['nombre'] ?? '');
-    $apellido = trim($_POST['apellido'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    
-    if (empty($nombre) || empty($apellido) || empty($email) || empty($password)) {
-        $mensaje = 'Todos los campos son obligatorios.';
-        $tipo_mensaje = 'error';
-    } else {
-        $payload = json_encode([
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'email' => $email,
-            'password' => $password
-        ]);
-
-        $ch = curl_init('http://localhost/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_register.php');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($payload)
-        ]);
-
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        $result = json_decode($response, true);
-
-        if ($http_code === 200 && isset($result['success']) && $result['success'] === true) {
-            $mensaje = '✅ Registro exitoso. Ya puedes iniciar sesión.';
-            $tipo_mensaje = 'success';
-        } else {
-            $mensaje = $result['message'] ?? 'Error desconocido';
-            $tipo_mensaje = 'error';
-        }
-    }
 }
 ?>
 
@@ -114,9 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type="submit"]:hover {
             background-color: #218838;
         }
-        .text-center {
-            text-align: center;
-        }
         .link {
             display: block;
             text-align: center;
@@ -128,21 +78,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="register-box">
     <h2>Registrar Administrador</h2>
 
-    <?php if ($mensaje): ?>
-        <div class="message <?php echo $tipo_mensaje; ?>">
-            <?php echo htmlspecialchars($mensaje); ?>
-        </div>
-    <?php endif; ?>
+    <div id="mensaje" class="message" style="display: none;"></div>
 
-    <form method="POST">
-        <input type="text" name="nombre" placeholder="Nombre completo" required>
-        <input type="text" name="apellido" placeholder="Apellido" required>
-        <input type="email" name="email" placeholder="Correo electrónico" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
+    <form id="registerForm">
+        <input type="text" id="nombre" placeholder="Nombre completo" required>
+        <input type="text" id="apellido" placeholder="Apellido" required>
+        <input type="email" id="email" placeholder="Correo electrónico" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
         <input type="submit" value="Registrar">
     </form>
 
     <a class="link" href="index.php">← Volver al login</a>
 </div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const mensajeDiv = document.getElementById('mensaje');
+    mensajeDiv.style.display = 'none';
+    mensajeDiv.classList.remove('error', 'success');
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!nombre || !apellido || !email || !password) {
+        mensajeDiv.textContent = 'Todos los campos son obligatorios.';
+        mensajeDiv.classList.add('error');
+        mensajeDiv.style.display = 'block';
+        return;
+    }
+
+    try {
+        const res = await fetch('http://localhost/proyecto-final-teamjl/gestion_incidencias_web/api/public/admin_register.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, apellido, email, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            mensajeDiv.textContent = '✅ Registro exitoso. Ya puedes iniciar sesión.';
+            mensajeDiv.classList.add('success');
+        } else {
+            mensajeDiv.textContent = data.message || 'Error desconocido.';
+            mensajeDiv.classList.add('error');
+        }
+
+        mensajeDiv.style.display = 'block';
+    } catch (error) {
+        mensajeDiv.textContent = 'Error de conexión con el servidor.';
+        mensajeDiv.classList.add('error');
+        mensajeDiv.style.display = 'block';
+    }
+});
+</script>
 </body>
 </html>

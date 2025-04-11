@@ -14,4 +14,4 @@ if (!isset($data['email']) || !isset($data['password'])) {
     Response::error("Email y contraseña requeridos", 422);
 }
 
-AdminController::login($data['email'], $data['password']);
+AdminController::login($data);

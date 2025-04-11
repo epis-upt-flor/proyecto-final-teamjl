@@ -1,6 +1,8 @@
 <?php
     #Llamamos al namespace y las dependencias
     namespace App\Controllers;
+
+    use App\Services\AdminService;
     use App\Core\Database;
     use App\Core\Auth;
     use App\Core\Response;
@@ -9,35 +11,23 @@
 
     #Declaramos la clase con el método estático para el login
     class AdminController {
-        public static function login(string $email, string $password): void
+        public static function login(array $data): void
         {
-            #Usamos try y catch para para agrupar las operaciones y, si hay algún error,
-            #se envía la respuesta con el código HTTP 500
-            try {
-                $pdo = Database::getInstance();
-
-                $stmt = $pdo->prepare("SELECT * FROM administrador WHERE email = :email");
-                $stmt->execute(['email' => $email]);
-                $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!$admin || !password_verify($password, $admin['password'])) {
-                    Response::error("Credenciales inválidas", 401);
-                }
-
-                // Generar token JWT con info básica
-                $token = Auth::generarToken([
-                    'admin_id' => $admin['id'],
-                    'nombre' => $admin['nombre']
-                ]);
-
-                Response::success([
-                    'token' => $token,
-                    'admin_id' => $admin['id'],
-                    'nombre' => $admin['nombre']
-                ], "Inicio de sesión exitoso");
-            } catch (Exception $e) {
-                Response::error("Error interno: " . $e->getMessage(), 500);
+            if (empty($data['email']) || empty($data['password'])) {
+                Response::error("Email y contraseña son requeridos", 422);
             }
+        
+            $admin = AdminService::login($data['email'], $data['password']);
+        
+            if (!$admin) {
+                Response::error("Credenciales incorrectas", 401);
+            }
+        
+            session_start();
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_nombre'] = $admin['nombre'];
+        
+            Response::success(['admin' => $admin], "Inicio de sesión exitoso");
         }
 
         public static function register(array $data): void
@@ -48,40 +38,20 @@
                 empty($data['email']) ||
                 empty($data['password'])
             ) {
-                Response::error("Nombre, apellido, correo y contraseña son obligatorios", 422);
+                Response::error("Todos los campos son obligatorios", 422);
             }
         
-            $nombre = trim($data['nombre']);
-            $apellido = trim($data['apellido']);
-            $email = trim($data['email']);
-            $password = trim($data['password']);
+            $existente = AdminService::login($data['email'], $data['password']);
+            if ($existente) {
+                Response::error("Ya existe un administrador con ese email", 409);
+            }
         
-            try {
-                $pdo = Database::getInstance();
+            $exito = AdminService::registrar($data);
         
-                $stmt = $pdo->prepare("SELECT id FROM administrador WHERE email = :email");
-                $stmt->execute(['email' => $email]);
-        
-                if ($stmt->fetch()) {
-                    Response::error("Ya existe un administrador con ese correo", 409);
-                }
-        
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
-        
-                $stmt = $pdo->prepare("
-                    INSERT INTO administrador (nombre, apellido, email, password)
-                    VALUES (:nombre, :apellido, :email, :password)
-                ");
-                $stmt->execute([
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'email' => $email,
-                    'password' => $hashed
-                ]);
-        
+            if ($exito) {
                 Response::success([], "Administrador registrado correctamente");
-            } catch (\Exception $e) {
-                Response::error("Error interno: " . $e->getMessage(), 500);
+            } else {
+                Response::error("Error al registrar el administrador", 500);
             }
         }
     }
