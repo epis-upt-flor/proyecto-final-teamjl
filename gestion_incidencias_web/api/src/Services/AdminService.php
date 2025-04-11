@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Repositories\AdminRepository;
+use App\Core\Auth;
 
 class AdminService
 {
@@ -13,7 +14,20 @@ class AdminService
             return null;
         }
 
-        return $admin;
+        // Generar el token JWT
+        $token = Auth::generarToken([
+            'admin_id' => $admin['id'],
+            'nombre' => $admin['nombre'],
+            'email' => $admin['email']
+        ]);
+
+        // Retornar datos + token
+        return [
+            'id' => $admin['id'],
+            'nombre' => $admin['nombre'],
+            'email' => $admin['email'],
+            'token' => $token
+        ];
     }
 
     public static function registrar(array $data): bool

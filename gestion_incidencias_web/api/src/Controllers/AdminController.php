@@ -27,7 +27,11 @@
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_nombre'] = $admin['nombre'];
         
-            Response::success(['admin' => $admin], "Inicio de sesión exitoso");
+            Response::success([
+                'admin_id' => $admin['id'],
+                'nombre' => $admin['nombre'],
+                'token' => $admin['token']
+            ], "Inicio de sesión exitoso");
         }
 
         public static function register(array $data): void
