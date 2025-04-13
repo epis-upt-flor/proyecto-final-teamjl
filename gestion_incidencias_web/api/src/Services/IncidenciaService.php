@@ -9,4 +9,14 @@ class IncidenciaService
     {
         return IncidenciaRepository::obtenerTodas();
     }
+
+    public static function obtenerPorEmpleado(int $empleadoId): array
+    {
+        return IncidenciaRepository::obtenerPorEmpleado($empleadoId);
+    }
+
+    public static function actualizarEstado(int $incidenciaId, int $estadoId): bool
+    {
+        return IncidenciaRepository::actualizarEstado($incidenciaId, $estadoId);
+    }
 }
