@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:image_picker/image_picker.dart';
 import '../services/incidencia_service.dart';
 
 class ReportarScreen extends StatefulWidget {
@@ -16,26 +18,38 @@ class _ReportarScreenState extends State<ReportarScreen> {
   final TextEditingController _zonaController = TextEditingController();
   late GoogleMapController _mapController;
 
-  // Ubicación predeterminada
   LatLng _selectedLocation = LatLng(-18.03727, -70.25357);
-
-
-  final List<String> _tipos = [
-    "Fugas de agua",
-    "Daños en la vía pública",
-    "Problemas con la iluminación",
-    "Basura y desechos",
-    "Problemas de señalización",
-    "Árboles caídos",
-    "Daños en edificios públicos",
-    "Accidentes de tráfico",
-    "Drenaje obstruido",
-    "Otros"
-  ];
-
-  String _tipoSeleccionado = "Fugas de agua";
+  List<Map<String, dynamic>> _tipos = [];
+  int? _tipoSeleccionadoId;
+  File? _imagenSeleccionada;
 
   static const LatLng _centroGregorio = LatLng(-18.03727, -70.25357);
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarTipos();
+  }
+
+  Future<void> _cargarTipos() async {
+    final tipos = await IncidenciaService.obtenerTiposIncidencia();
+    setState(() {
+      _tipos = tipos;
+      if (_tipos.isNotEmpty) {
+        _tipoSeleccionadoId = _tipos[0]['id'];
+      }
+    });
+  }
+
+  Future<void> _seleccionarImagen() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imagenSeleccionada = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +63,6 @@ class _ReportarScreenState extends State<ReportarScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // Descripcion
               TextField(
                 controller: _descripcionController,
                 decoration: const InputDecoration(
@@ -59,8 +72,6 @@ class _ReportarScreenState extends State<ReportarScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-
-              // Direccion
               TextField(
                 controller: _direccionController,
                 decoration: const InputDecoration(
@@ -69,8 +80,6 @@ class _ReportarScreenState extends State<ReportarScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Zona
               TextField(
                 controller: _zonaController,
                 decoration: const InputDecoration(
@@ -79,25 +88,40 @@ class _ReportarScreenState extends State<ReportarScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Seleccionar tipo
-              DropdownButton<String>(
-                value: _tipoSeleccionado,
-                items: _tipos.map((String tipo) {
-                  return DropdownMenuItem<String>(
-                    value: tipo,
-                    child: Text(tipo),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _tipoSeleccionado = newValue!;
-                  });
-                },
-              ),
+              if (_tipos.isNotEmpty)
+                DropdownButton<int>(
+                  value: _tipoSeleccionadoId,
+                  items: _tipos.map((tipo) {
+                    return DropdownMenuItem<int>(
+                      value: tipo['id'],
+                      child: Text(tipo['nombre']),
+                    );
+                  }).toList(),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _tipoSeleccionadoId = newValue!;
+                    });
+                  },
+                ),
               const SizedBox(height: 16),
 
-              // Mapa
+              // Botón para seleccionar imagen
+              ElevatedButton.icon(
+                onPressed: _seleccionarImagen,
+                icon: const Icon(Icons.image),
+                label: const Text("Seleccionar Imagen"),
+              ),
+              const SizedBox(height: 10),
+              if (_imagenSeleccionada != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    _imagenSeleccionada!,
+                    height: 200,
+                  ),
+                ),
+
+              const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
@@ -130,21 +154,22 @@ class _ReportarScreenState extends State<ReportarScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Botón de Enviar
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.send),
                   label: const Text('Enviar'),
                   onPressed: () async {
-                    final response = await IncidenciaService.registrarIncidencia(
-                      _descripcionController.text,
-                      _selectedLocation.latitude,
-                      _selectedLocation.longitude,
-                      _direccionController.text,
-                      _zonaController.text,
-                      _tipoSeleccionado,
+                    if (_tipoSeleccionadoId == null) return;
+
+                    final response = await IncidenciaService.registrarIncidenciaConFoto(
+                      descripcion: _descripcionController.text,
+                      latitud: _selectedLocation.latitude,
+                      longitud: _selectedLocation.longitude,
+                      direccion: _direccionController.text,
+                      zona: _zonaController.text,
+                      tipoId: _tipoSeleccionadoId!,
+                      foto: _imagenSeleccionada,
                     );
 
                     if (response['success'] == true) {
@@ -174,16 +199,11 @@ class _ReportarScreenState extends State<ReportarScreen> {
     );
   }
 
-
   void _geocodeLocation(LatLng location) async {
     try {
-
       List<Placemark> placemarks = await placemarkFromCoordinates(location.latitude, location.longitude);
       if (placemarks.isNotEmpty) {
-
         Placemark place = placemarks[0];
-
-
         setState(() {
           _direccionController.text = '${place.name}, ${place.street}, ${place.locality}, ${place.country}';
           _zonaController.text = place.subAdministrativeArea ?? "Zona no disponible";

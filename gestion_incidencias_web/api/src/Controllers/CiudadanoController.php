@@ -22,9 +22,14 @@ class CiudadanoController
         $lat = $data['latitud'];
         $lng = $data['longitud'];
         $descripcion = $data['descripcion'];
-        $foto = $data['foto'] ?? null; 
         $fecha = date("Y-m-d H:i:s");
         $zona = $data['zona'] ?? 'Zona no disponible';
+
+        // Convertir base64 a binario si se envió la foto
+        $foto = null;
+        if (!empty($data['foto'])) {
+            $foto = base64_decode($data['foto']);
+        }
 
         try {
             $pdo = Database::getInstance();
@@ -37,19 +42,32 @@ class CiudadanoController
                 )
             ");
 
-            $stmt->execute([
-                'tipo_id' => $tipo_id,
-                'descripcion' => $descripcion,
-                'foto' => $foto,
-                'lat' => $lat,
-                'lng' => $lng,
-                'fecha' => $fecha,
-                'zona' => $zona
-            ]);
+            $stmt->bindParam(':tipo_id', $tipo_id, \PDO::PARAM_INT);
+            $stmt->bindParam(':descripcion', $descripcion);
+            $stmt->bindParam(':foto', $foto, \PDO::PARAM_LOB);
+            $stmt->bindParam(':lat', $lat);
+            $stmt->bindParam(':lng', $lng);
+            $stmt->bindParam(':fecha', $fecha);
+            $stmt->bindParam(':zona', $zona);
+
+            $stmt->execute();
 
             Response::success([], "Incidencia reportada correctamente.");
         } catch (Exception $e) {
             Response::error("Error al registrar la incidencia: " . $e->getMessage(), 500);
+        }
+    }
+
+    public static function obtenerTiposIncidencia(): void
+    {
+        try {
+            $pdo = Database::getInstance();
+            $stmt = $pdo->query("SELECT id, nombre FROM tipo_incidencia ORDER BY nombre ASC");
+            $tipos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            Response::json($tipos);
+        } catch (Exception $e) {
+            Response::error("Error al obtener tipos de incidencia: " . $e->getMessage(), 500);
         }
     }
 }
