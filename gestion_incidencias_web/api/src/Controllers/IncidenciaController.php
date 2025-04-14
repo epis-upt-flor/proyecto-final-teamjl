@@ -30,7 +30,22 @@ class IncidenciaController
             Response::error("No se pudo actualizar el estado", 500);
         }
     }
+
+    public static function asignarEmpleado(array $data): void
+    {
+        if (empty($data['incidencia_id']) || empty($data['empleado_id'])) {
+            Response::error("Datos incompletos para la asignación", 422);
+        }
     
+        $asignado = IncidenciaService::asignarEmpleado($data['incidencia_id'], $data['empleado_id']);
+    
+        if ($asignado) {
+            Response::success([], "Incidencia asignada correctamente");
+        } else {
+            Response::error("Error al asignar la incidencia", 500);
+        }
+    }
+        
     public static function obtenerPorEmpleado(int $empleadoId): void
     {
         try {

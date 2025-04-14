@@ -10,6 +10,12 @@ class IncidenciaService
         return IncidenciaRepository::obtenerTodas();
     }
 
+    public static function asignarEmpleado(int $incidenciaId, int $empleadoId): bool
+    {
+        return IncidenciaRepository::asignarEmpleado($incidenciaId, $empleadoId);
+    }
+    
+
     public static function obtenerPorEmpleado(int $empleadoId): array
     {
         return IncidenciaRepository::obtenerPorEmpleado($empleadoId);
