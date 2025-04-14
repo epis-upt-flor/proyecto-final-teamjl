@@ -10,7 +10,7 @@
         {
             $pdo = Database::getInstance();
 
-            $query = "SELECT id, dni, nombre, apellido, email FROM empleado ORDER BY apellido ASC";
+            $query = "SELECT id, dni, nombre, apellido, email FROM empleado ORDER BY id ASC";
 
             $stmt = $pdo->query($query);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

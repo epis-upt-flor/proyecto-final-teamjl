@@ -22,7 +22,7 @@
                 FROM incidencia i
                 INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
                 INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
-                ORDER BY i.fecha_reporte DESC
+                ORDER BY i.fecha_reporte ASC
             ";
 
             $stmt = $pdo->query($sql);
@@ -58,7 +58,7 @@
                 INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
                 INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
                 WHERE i.asignado_a = :empleado_id
-                ORDER BY i.fecha_reporte DESC
+                ORDER BY i.fecha_reporte ASC
             ";
 
             $stmt = $pdo->prepare($sql);
