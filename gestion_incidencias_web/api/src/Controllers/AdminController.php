@@ -1,5 +1,4 @@
 <?php
-    #Llamamos al namespace y las dependencias
     namespace App\Controllers;
 
     use App\Services\AdminService;
@@ -9,7 +8,6 @@
     use PDO;
     use Exception;
 
-    #Declaramos la clase con el método estático para el login
     class AdminController {
         public static function login(array $data): void
         {

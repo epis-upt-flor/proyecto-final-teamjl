@@ -5,7 +5,6 @@ import 'package:http_parser/http_parser.dart';
 import '../config.dart';
 
 class IncidenciaService {
-  // Registrar incidencia con imagen (multipart/form-data)
   static Future<Map<String, dynamic>> registrarIncidenciaConFoto({
     required String descripcion,
     required double latitud,
@@ -20,7 +19,6 @@ class IncidenciaService {
     try {
       var request = http.MultipartRequest('POST', url);
 
-      // Campos normales
       request.fields['descripcion'] = descripcion;
       request.fields['latitud'] = latitud.toString();
       request.fields['longitud'] = longitud.toString();
@@ -28,13 +26,12 @@ class IncidenciaService {
       request.fields['zona'] = zona;
       request.fields['tipo_id'] = tipoId.toString();
 
-      // Si hay foto, la añadimos como archivo
       if (foto != null) {
         request.files.add(
           await http.MultipartFile.fromPath(
             'foto',
             foto.path,
-            contentType: MediaType('image', 'jpeg'), // puedes cambiar si no es JPG
+            contentType: MediaType('image', 'jpeg'),
           ),
         );
       }
@@ -52,7 +49,6 @@ class IncidenciaService {
     }
   }
 
-  // Obtener lista de tipos de incidencia
   static Future<List<Map<String, dynamic>>> obtenerTiposIncidencia() async {
     final url = Uri.parse('${BASE_URL}api_ciudadano/tipos_incidencia.php');
 

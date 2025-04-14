@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 
 class AuthService {
-  // Método para iniciar sesión (empleados)
   static Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('${BASE_URL}api_empleados/login.php');
 
@@ -29,7 +28,6 @@ class AuthService {
     }
   }
 
-  // Método para registrar un nuevo empleado
   static Future<Map<String, dynamic>> register(String dni, String name, String surname, String email, String password) async {
     final url = Uri.parse('${BASE_URL}api_empleados/registrar.php');
 

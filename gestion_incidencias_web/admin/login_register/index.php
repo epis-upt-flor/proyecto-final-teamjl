@@ -112,10 +112,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         console.log("Respuesta del login:", data);
 
         if (data.success) {
-            // Guardar token en sessionStorage
             sessionStorage.setItem('admin_token', data.data.token);
 
-            // Crear sesión PHP desde el cliente (opcional si usas session del lado del server)
             const phpSession = await fetch('crear_sesion_admin.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

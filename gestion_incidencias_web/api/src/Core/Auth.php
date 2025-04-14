@@ -1,11 +1,9 @@
 <?php
-    #Llamamos al namespace y usamos las clases externas
     namespace App\Core;
     use Firebase\JWT\JWT;
     use Firebase\JWT\Key;
     use Exception;
 
-    #Creamos la clase para verificar los tokens JWT y la propiedad estática
     class Auth
     {
         private static string $secret;
