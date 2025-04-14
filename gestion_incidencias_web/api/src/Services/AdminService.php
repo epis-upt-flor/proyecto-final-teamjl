@@ -14,14 +14,12 @@
                 return null;
             }
 
-            // Generar el token JWT
             $token = Auth::generarToken([
                 'admin_id' => $admin['id'],
                 'nombre' => $admin['nombre'],
                 'email' => $admin['email']
             ]);
 
-            // Retornar datos + token
             return [
                 'id' => $admin['id'],
                 'nombre' => $admin['nombre'],
