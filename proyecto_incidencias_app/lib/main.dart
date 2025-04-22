@@ -70,6 +70,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
+                // Botón "Reportar Incidencia"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -94,6 +95,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                // Botón "Iniciar Sesion"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
@@ -118,6 +120,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                // Botón "Registrarse"
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
