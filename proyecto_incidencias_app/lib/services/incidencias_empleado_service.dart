@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../config.dart';
 
@@ -13,11 +14,28 @@ class IncidenciasEmpleadoService {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData['success'] == true && responseData['data'] is List) {
-          return List<Map<String, dynamic>>.from(responseData['data']);
+          List<Map<String, dynamic>> incidencias = List<Map<String, dynamic>>.from(responseData['data']);
+          for (var incidencia in incidencias) {
+            // Verificar si contiene la foto y decodificarla
+            if (incidencia.containsKey('foto') && incidencia['foto'] != null) {
+              try {
+                // Decodificar la imagen desde base64 a Uint8List
+                Uint8List fotoBytes = base64Decode(incidencia['foto']);
+                incidencia['foto'] = fotoBytes;
+                print("Foto procesada correctamente: ${incidencia['id']}");
+              } catch (e) {
+                print("Error al decodificar la foto: $e");
+                incidencia['foto'] = null;
+              }
+            }
+          }
+          return incidencias;
         } else {
+          print("Error en la estructura de datos recibidos: ${responseData['message']}");
           return [];
         }
       } else {
+        print("Error en la solicitud: Código ${response.statusCode}");
         return [];
       }
     } catch (e) {
@@ -44,6 +62,7 @@ class IncidenciasEmpleadoService {
         final responseData = jsonDecode(response.body);
         return responseData['success'] == true;
       } else {
+        print("Error al actualizar estado: Código ${response.statusCode}");
         return false;
       }
     } catch (e) {
@@ -52,7 +71,7 @@ class IncidenciasEmpleadoService {
     }
   }
 
-  // Obtener los detalles de una incidencia específica, usando empleadoId + incidenciaId
+  // Obtener los detalles de una incidencia específica
   static Future<Map<String, dynamic>?> obtenerIncidenciaPorId(int empleadoId, int incidenciaId) async {
     final url = Uri.parse('${BASE_URL}api_empleados/incidencias_asignadas.php?empleado_id=$empleadoId');
 
@@ -62,12 +81,28 @@ class IncidenciasEmpleadoService {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData['success'] == true && responseData['data'] is List) {
-          return List<Map<String, dynamic>>.from(responseData['data'])
+          var incidencia = List<Map<String, dynamic>>.from(responseData['data'])
               .firstWhere((element) => element['id'] == incidenciaId, orElse: () => {});
+          
+          // Verificar si contiene la foto y decodificarla
+          if (incidencia.containsKey('foto') && incidencia['foto'] != null) {
+            try {
+              // Decodificar la imagen desde base64 a Uint8List
+              Uint8List fotoBytes = base64Decode(incidencia['foto']);
+              incidencia['foto'] = fotoBytes;
+              print("Foto de incidencia procesada: ${incidencia['id']}");
+            } catch (e) {
+              print("Error al decodificar la foto: $e");
+              incidencia['foto'] = null;
+            }
+          }
+          return incidencia;
         } else {
+          print("Error en la estructura de datos recibidos: ${responseData['message']}");
           return null;
         }
       } else {
+        print("Error en la solicitud: Código ${response.statusCode}");
         return null;
       }
     } catch (e) {

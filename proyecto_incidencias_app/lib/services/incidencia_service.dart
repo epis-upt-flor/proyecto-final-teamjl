@@ -20,7 +20,7 @@ class IncidenciaService {
     try {
       var request = http.MultipartRequest('POST', url);
 
-      // Campos normales
+
       request.fields['descripcion'] = descripcion;
       request.fields['latitud'] = latitud.toString();
       request.fields['longitud'] = longitud.toString();
@@ -34,7 +34,7 @@ class IncidenciaService {
           await http.MultipartFile.fromPath(
             'foto',
             foto.path,
-            contentType: MediaType('image', 'jpeg'), // puedes cambiar si no es JPG
+            contentType: MediaType('image', 'jpeg'),
           ),
         );
       }

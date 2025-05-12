@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'tareas_screen.dart'; // Deberás crear este archivo próximamente
+import 'tareas_screen.dart';
 
 class EmpleadoScreen extends StatefulWidget {
   final Map<String, dynamic> user;

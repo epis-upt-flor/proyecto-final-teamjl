@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../services/incidencias_empleado_service.dart';
@@ -60,7 +60,7 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
                       const SizedBox(height: 16),
 
                       // Imagen
-                      if (_incidencia!['foto'] != null && _incidencia!['foto'].toString().isNotEmpty)
+                      if (_incidencia!['foto'] != null && _incidencia!['foto'] is Uint8List)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -72,9 +72,12 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.memory(
-                                base64Decode(_incidencia!['foto']),
+                                _incidencia!['foto'],
                                 height: 200,
                                 fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text('Imagen no disponible');
+                                },
                               ),
                             ),
                           ],

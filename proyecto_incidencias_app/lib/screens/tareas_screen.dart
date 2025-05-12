@@ -92,7 +92,7 @@ class _TareasScreenState extends State<TareasScreen> {
                 icon: const Icon(Icons.check_circle_outline, color: Colors.green),
                 tooltip: 'Marcar como Completado',
                 onPressed: () {
-                  _actualizarEstado(incidencia['id'], 3); // Estado "Completado"
+                  _actualizarEstado(incidencia['id'], 3);
                 },
               )
             : const Icon(Icons.check_circle, color: Colors.grey),
@@ -102,7 +102,7 @@ class _TareasScreenState extends State<TareasScreen> {
             MaterialPageRoute(
               builder: (context) => DetalleIncidenciaScreen(
                 incidenciaId: incidencia['id'],
-                empleadoId: widget.user['id'], // ✅ ahora pasamos también el empleadoId
+                empleadoId: widget.user['id'],
               ),
             ),
           );
