@@ -78,7 +78,7 @@
         <img src="https://cdn-icons-png.flaticon.com/512/5988/5988227.png" alt="icono sistema" style="width: 90px;">
 
         <div>
-            <a href="admin/login_register/index.php" class="btn btn-acceso">Ingresar como Administrador</a>
+            <a href="admin/index.php?path=auth/login" class="btn btn-acceso">Ingresar como Administrador</a>
         </div>
 
         <div class="creditos">
