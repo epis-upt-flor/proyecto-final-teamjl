@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'reportar_screen.dart';
+import 'historial_screen.dart';
 
 class CiudadanoHome extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -14,10 +15,10 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
   int _selectedIndex = 0;
 
   static final List<Widget> _screens = <Widget>[
-    ReportarScreen(),
-    Center(child: Text('Historial')),
-    Center(child: Text('Notificaciones')),
-    Center(child: Text('Perfil')),
+    const ReportarScreen(),
+    const HistorialScreen(),
+    const Center(child: Text('Notificaciones')),
+    const Center(child: Text('Perfil')),
   ];
 
   void _onItemTapped(int index) {

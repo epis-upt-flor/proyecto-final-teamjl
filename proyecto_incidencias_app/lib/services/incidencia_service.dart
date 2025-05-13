@@ -20,7 +20,6 @@ class IncidenciaService {
     try {
       var request = http.MultipartRequest('POST', url);
 
-
       request.fields['descripcion'] = descripcion;
       request.fields['latitud'] = latitud.toString();
       request.fields['longitud'] = longitud.toString();
@@ -69,6 +68,29 @@ class IncidenciaService {
         return [];
       }
     } catch (e) {
+      return [];
+    }
+  }
+
+  // Obtener todas las incidencias (para el historial del ciudadano)
+  static Future<List<Map<String, dynamic>>> obtenerTodasLasIncidencias() async {
+    final url = Uri.parse('${BASE_URL}api_ciudadano/listar_incidencias.php');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['success'] == true && responseData['data'] is List) {
+          return List<Map<String, dynamic>>.from(responseData['data']);
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error al obtener todas las incidencias: $e");
       return [];
     }
   }

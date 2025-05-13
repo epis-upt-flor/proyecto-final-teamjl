@@ -69,5 +69,16 @@
                 Response::error("Error al obtener tipos de incidencia: " . $e->getMessage(), 500);
             }
         }
+
+        public static function obtenerHistorialIncidencias(): void
+        {
+            try {
+
+                $incidencias = \App\Repositories\IncidenciaRepository::obtenerTodas();
+                Response::success($incidencias, "Historial de incidencias");
+            } catch (Exception $e) {
+                Response::error("Error al obtener historial de incidencias: " . $e->getMessage(), 500);
+            }
+        }
     }
 ?>

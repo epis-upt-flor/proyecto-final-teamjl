@@ -29,6 +29,7 @@
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
+
         public static function asignarEmpleado(int $incidenciaId, int $empleadoId): bool
         {
             $pdo = Database::getInstance();
