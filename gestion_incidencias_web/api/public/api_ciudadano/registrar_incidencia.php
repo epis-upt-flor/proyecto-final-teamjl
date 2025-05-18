@@ -14,6 +14,7 @@
         'descripcion' => $_POST['descripcion'] ?? null,
         'direccion'   => $_POST['direccion'] ?? null,
         'zona'        => $_POST['zona'] ?? null,
+        'id_celular'  => $_POST['ciudadano_id'] ?? null,
     ];
 
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {

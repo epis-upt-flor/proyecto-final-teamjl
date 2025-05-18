@@ -14,13 +14,6 @@ class CiudadanoHome extends StatefulWidget {
 class _CiudadanoHomeState extends State<CiudadanoHome> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _screens = <Widget>[
-    const ReportarScreen(),
-    const HistorialScreen(),
-    const Center(child: Text('Notificaciones')),
-    const Center(child: Text('Perfil')),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -29,6 +22,14 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
 
   @override
   Widget build(BuildContext context) {
+    // Lista de pantallas con acceso al ID del ciudadano
+    final List<Widget> _screens = <Widget>[
+      ReportarScreen(ciudadanoId: widget.user['id_celular']),
+      HistorialScreen(ciudadanoId: widget.user['id_celular']),
+      const Center(child: Text('Notificaciones')),
+      const Center(child: Text('Perfil')),
+    ];
+
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

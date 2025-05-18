@@ -8,5 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     Response::error("Método no permitido", 405);
 }
 
-CiudadanoController::obtenerHistorialIncidencias();
+if (!isset($_GET['ciudadano_id'])) {
+    Response::error("ID del ciudadano requerido", 422);
+}
+
+$idCelular = (int)$_GET['ciudadano_id'];
+CiudadanoController::obtenerHistorialIncidencias($idCelular);
 ?>

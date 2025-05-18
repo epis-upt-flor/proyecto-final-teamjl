@@ -6,7 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import '../services/incidencia_service.dart';
 
 class ReportarScreen extends StatefulWidget {
-  const ReportarScreen({Key? key}) : super(key: key);
+  final int ciudadanoId;
+
+  const ReportarScreen({Key? key, required this.ciudadanoId}) : super(key: key);
 
   @override
   State<ReportarScreen> createState() => _ReportarScreenState();
@@ -18,7 +20,7 @@ class _ReportarScreenState extends State<ReportarScreen> {
   final TextEditingController _zonaController = TextEditingController();
   late GoogleMapController _mapController;
 
-  LatLng _selectedLocation = LatLng(-18.03727, -70.25357);
+  LatLng _selectedLocation = const LatLng(-18.03727, -70.25357);
   List<Map<String, dynamic>> _tipos = [];
   int? _tipoSeleccionadoId;
   File? _imagenSeleccionada;
@@ -88,6 +90,8 @@ class _ReportarScreenState extends State<ReportarScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Selección del tipo de incidencia restaurado
               if (_tipos.isNotEmpty)
                 DropdownButton<int>(
                   value: _tipoSeleccionadoId,
@@ -170,6 +174,7 @@ class _ReportarScreenState extends State<ReportarScreen> {
                       zona: _zonaController.text,
                       tipoId: _tipoSeleccionadoId!,
                       foto: _imagenSeleccionada,
+                      ciudadanoId: widget.ciudadanoId,
                     );
 
                     if (response['success'] == true) {

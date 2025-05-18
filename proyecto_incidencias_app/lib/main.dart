@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/ciudadano_home.dart';
+import 'screens/phone_input_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -84,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CiudadanoHome(user: {}),
+                        builder: (context) => const PhoneInputScreen(),
                       ),
                     );
                   },
@@ -95,7 +95,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Botón "Iniciar Sesion"
+                // Botón "Iniciar Sesión"
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

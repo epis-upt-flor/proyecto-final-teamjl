@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/incidencia_service.dart';
 
 class HistorialScreen extends StatefulWidget {
-  const HistorialScreen({Key? key}) : super(key: key);
+  final int ciudadanoId;
+
+  const HistorialScreen({Key? key, required this.ciudadanoId}) : super(key: key);
 
   @override
   State<HistorialScreen> createState() => _HistorialScreenState();
@@ -14,7 +16,13 @@ class _HistorialScreenState extends State<HistorialScreen> {
   @override
   void initState() {
     super.initState();
-    _incidencias = IncidenciaService.obtenerTodasLasIncidencias();
+    _cargarIncidencias();
+  }
+
+  void _cargarIncidencias() {
+    setState(() {
+      _incidencias = IncidenciaService.obtenerTodasLasIncidencias(widget.ciudadanoId);
+    });
   }
 
   @override
@@ -87,7 +95,6 @@ class _HistorialScreenState extends State<HistorialScreen> {
             Text('Fecha: ${incidencia['fecha_reporte'] ?? 'Sin fecha'}'),
           ],
         ),
-        
         enabled: false,
       ),
     );
