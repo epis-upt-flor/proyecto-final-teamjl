@@ -4,39 +4,17 @@ class IncidenciasController
 {
     public function index()
     {
-        $urlInc = API_BASE . 'admin_dashboard/incidencias.php';
-        $incResp = @file_get_contents($urlInc);
-        $incJson = json_decode($incResp, true);
+        $incJson  = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/incidencias.php'), true);
 
-        if (empty($incJson['success'])) {
-            error_log("Error cargando incidencias: " . ($incJson['message'] ?? 'JSON inválido'));
-            $incidencias = [];
-            $errorInc = $incJson['message'] ?? 'No se pudieron cargar las incidencias.';
-        } else {
-            $incidencias = $incJson['data'];
-            $errorInc = null;
-        }
+        $empJson  = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/empleados.php'), true);
 
-        $urlEmp = API_BASE . 'admin_dashboard/empleados.php';
-        $empResp = @file_get_contents($urlEmp);
-        $empJson = json_decode($empResp, true);
+        $prioJson = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/prioridad.php'), true);
 
-        if (empty($empJson['success'])) {
-            error_log("Error cargando empleados: " . ($empJson['message'] ?? 'JSON inválido'));
-            $empleados = [];
-            $errorEmp = $empJson['message'] ?? 'No se pudieron cargar los empleados.';
-        } else {
-            $empleados = $empJson['data'];
-            $errorEmp = null;
-        }
-
-        $urlPrio = API_BASE . 'admin_dashboard/prioridades.php';
-        $jsonPrio = @file_get_contents($urlPrio);
-        $prioJson = json_decode($jsonPrio, true);
-        $prioridades = !empty($prioJson['success'])
-            ? $prioJson['data']
-            : [];
-
-        view('incidencias', compact('incidencias','empleados','errorInc','errorEmp','prioridades'));
+        view('incidencias', [
+            'incidencias' => $incJson['data']      ?? [],
+            'empleados'   => $empJson['data']      ?? [],
+            'prioridades' => $prioJson['data']     ?? [],
+        ]);
     }
+
 }

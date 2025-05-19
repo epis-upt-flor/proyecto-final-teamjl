@@ -1,10 +1,22 @@
 <?php
-require_once __DIR__ . '/../../bootstrap.php';
+    require_once __DIR__ . '/../../bootstrap.php';
+    use App\Core\Response;
+    use App\Core\Database;
 
-use App\Controllers\PrioridadController;
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        Response::error("Método no permitido", 405);
+    }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    \App\Core\Response::error("Método no permitido", 405);
-}
-
-PrioridadController::listar();
+    try {
+        $pdo = Database::getInstance();
+        $stmt = $pdo->query("
+            SELECT id, nivel AS prioridad
+            FROM prioridad
+            ORDER BY nivel DESC
+        ");
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        Response::success($data, "Prioridades obtenidas correctamente");
+    } catch (\Exception $e) {
+        Response::error("Error al obtener prioridades: " . $e->getMessage(), 500);
+    }
+?>

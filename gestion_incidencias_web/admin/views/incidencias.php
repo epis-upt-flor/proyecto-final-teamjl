@@ -1,3 +1,5 @@
+<?php // admin/views/incidencias.php ?>
+
 <h2 class="mb-4 text-center"><?= htmlspecialchars($title ?? 'Listado de Incidencias') ?></h2>
 
 <?php if (!empty($errorInc)): ?>
@@ -15,7 +17,7 @@
         <th>ID</th>
         <th>Tipo</th>
         <th>Estado</th>
-        <th>Prioridad</th>        <!-- Nueva columna -->
+        <th>Prioridad</th>
         <th>Descripción</th>
         <th>Ubicación</th>
         <th>Fecha</th>
@@ -33,13 +35,37 @@
             <td><?= htmlspecialchars($inc['id']) ?></td>
             <td><?= htmlspecialchars($inc['tipo']) ?></td>
             <td><?= htmlspecialchars($inc['estado']) ?></td>
-
-            <!-- Nuevo bloque: mostramos el nivel de prioridad -->
             <td>
-              <?= isset($inc['prioridad']) 
-                    ? htmlspecialchars($inc['prioridad']) 
-                    : '<span class="text-muted">—</span>' 
-              ?>
+              <?php if ($inc['estado'] === 'Pendiente'): ?>
+                <div class="d-flex align-items-center">
+                  <select
+                    id="prio-select-<?= $inc['id'] ?>"
+                    class="form-select form-select-sm"
+                  >
+                    <option value="">Seleccionar</option>
+                    <?php foreach ($prioridades as $p): ?>
+                      <option
+                        value="<?= $p['id'] ?>"
+                        <?= ($inc['prioridad'] ?? '') === $p['prioridad']
+                              ? 'selected' 
+                              : '' ?>
+                      >
+                        <?= htmlspecialchars($p['prioridad']) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                  <button
+                    onclick="assignPrioridad(<?= $inc['id'] ?>)"
+                    class="btn btn-sm btn-secondary ms-2"
+                  >
+                    ✔
+                  </button>
+                </div>
+              <?php else: ?>
+                <?= !empty($inc['prioridad'])
+                      ? htmlspecialchars($inc['prioridad'])
+                      : '<span class="text-muted">—</span>' ?>
+              <?php endif; ?>
             </td>
 
             <td><?= htmlspecialchars($inc['descripcion']) ?></td>
