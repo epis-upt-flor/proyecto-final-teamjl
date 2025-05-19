@@ -43,14 +43,12 @@ $title = 'Reportes Estadísticos';
 </div>
 
 <div class="text-center mb-4">
-  <!-- Generar PDF agrupado por empleado -->
   <a
     href="<?= url('reporte/exportPdf') . "&inicio={$inicio}&fin={$fin}" ?>"
     class="btn btn-outline-success mx-2"
   >
     📄 PDF por Empleado
   </a>
-  <!-- Generar Excel agrupado por empleado -->
   <a
     href="<?= url('reporte/exportExcel') . "&inicio={$inicio}&fin={$fin}" ?>"
     class="btn btn-outline-secondary mx-2"
@@ -63,7 +61,6 @@ $title = 'Reportes Estadísticos';
   const porEstado = <?= json_encode($por_estado, JSON_THROW_ON_ERROR) ?>;
   const porTipo   = <?= json_encode($por_tipo, JSON_THROW_ON_ERROR) ?>;
 
-  // Gráfico de estados
   const estados = porEstado.map(e => e.estado);
   const totalesEstado = porEstado.map(e => e.total);
   new Chart(document.getElementById('graficoEstado'), {
