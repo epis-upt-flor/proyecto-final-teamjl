@@ -30,6 +30,13 @@ class IncidenciasController
             $errorEmp = null;
         }
 
-        view('incidencias', compact('incidencias', 'empleados', 'errorInc', 'errorEmp'));
+        $urlPrio = API_BASE . 'admin_dashboard/prioridades.php';
+        $jsonPrio = @file_get_contents($urlPrio);
+        $prioJson = json_decode($jsonPrio, true);
+        $prioridades = !empty($prioJson['success'])
+            ? $prioJson['data']
+            : [];
+
+        view('incidencias', compact('incidencias','empleados','errorInc','errorEmp','prioridades'));
     }
 }

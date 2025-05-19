@@ -15,6 +15,7 @@
         <th>ID</th>
         <th>Tipo</th>
         <th>Estado</th>
+        <th>Prioridad</th>        <!-- Nueva columna -->
         <th>Descripción</th>
         <th>Ubicación</th>
         <th>Fecha</th>
@@ -24,7 +25,7 @@
     <tbody>
       <?php if (empty($incidencias)): ?>
         <tr>
-          <td colspan="7" class="text-center text-muted">No hay incidencias reportadas.</td>
+          <td colspan="8" class="text-center text-muted">No hay incidencias reportadas.</td>
         </tr>
       <?php else: ?>
         <?php foreach ($incidencias as $inc): ?>
@@ -32,6 +33,15 @@
             <td><?= htmlspecialchars($inc['id']) ?></td>
             <td><?= htmlspecialchars($inc['tipo']) ?></td>
             <td><?= htmlspecialchars($inc['estado']) ?></td>
+
+            <!-- Nuevo bloque: mostramos el nivel de prioridad -->
+            <td>
+              <?= isset($inc['prioridad']) 
+                    ? htmlspecialchars($inc['prioridad']) 
+                    : '<span class="text-muted">—</span>' 
+              ?>
+            </td>
+
             <td><?= htmlspecialchars($inc['descripcion']) ?></td>
             <td><?= htmlspecialchars($inc['latitud']) ?>, <?= htmlspecialchars($inc['longitud']) ?></td>
             <td><?= htmlspecialchars($inc['fecha_reporte']) ?></td>
