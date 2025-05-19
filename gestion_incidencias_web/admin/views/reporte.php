@@ -1,5 +1,4 @@
 <?php
-// admin/views/reporte.php
 $title = 'Reportes Estadísticos';
 ?>
 

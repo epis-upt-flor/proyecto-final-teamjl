@@ -1,4 +1,4 @@
-<?php // admin/views/partials/sidebar.php ?>
+<?php  ?>
 <nav class="sidebar bg-dark d-flex flex-column p-3">
   <h5 class="text-center text-white mb-4">ADMINISTRADOR</h5>
   <ul class="nav nav-pills flex-column mb-auto">

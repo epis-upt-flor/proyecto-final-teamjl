@@ -10,27 +10,24 @@
   >
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
   <style>
-    /* Sidebar fijo */
     .sidebar {
       position: fixed;
       top: 0;
       left: 0;
       width: 250px;
-      height: 100vh;        /* Ocupa toda la altura de la ventana */
-      overflow-y: auto;     /* Scroll interno si el contenido desborda */
+      height: 100vh;  
+      overflow-y: auto;     
       background-color: #343a40;
       color: white;
-      z-index: 1000;        /* Para asegurarse de que quede por encima */
+      z-index: 1000;       
     }
 
-    /* Contenido principal adaptado al ancho del sidebar */
     .main-content {
-      margin-left: 250px;   /* Mismo ancho que el sidebar */
+      margin-left: 250px;
       background-color: #f8f9fa;
       min-height: 100vh;
     }
 
-    /* Topbar pegado arriba */
     .topbar {
       position: sticky;
       top: 0;

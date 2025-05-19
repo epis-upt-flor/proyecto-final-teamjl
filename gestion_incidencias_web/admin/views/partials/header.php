@@ -1,4 +1,4 @@
-<?php // admin/views/partials/header.php ?>
+<?php ?>
 <header class="topbar bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
   <h4 class="m-0"><?= htmlspecialchars($title ?? '') ?></h4>
   <div class="d-flex align-items-center">

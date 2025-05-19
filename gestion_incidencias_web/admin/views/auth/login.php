@@ -1,5 +1,4 @@
-<?php // admin/views/auth/login.php
-// Título para este layout
+<?php 
 $title = 'Iniciar Sesión'; 
 ?>
 

@@ -1,4 +1,4 @@
-<?php // admin/views/dashboard.php ?>
+<?php ?>
 
 <div class="row text-center mb-4">
   <div class="col-md-4">

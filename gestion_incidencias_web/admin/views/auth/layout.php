@@ -1,4 +1,4 @@
-<?php // admin/views/auth/layout.php ?>
+<?php  ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

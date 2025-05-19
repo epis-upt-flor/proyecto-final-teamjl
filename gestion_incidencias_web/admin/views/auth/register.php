@@ -1,4 +1,4 @@
-<?php // admin/views/auth/register.php
+<?php 
 $title = 'Crear Cuenta';
 ?>
 

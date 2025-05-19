@@ -1,22 +1,16 @@
 <?php
-// admin/reporte/generar_pdf.php
-
-// 0) Carga de configuración y FPDF
-require_once __DIR__ . '/../config.php';    // define API_BASE
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/fpdf/fpdf.php';
 
-// 1) Rango de fechas
 $inicio = filter_input(INPUT_GET, 'inicio', FILTER_SANITIZE_STRING) ?: date('Y-m-01');
 $fin    = filter_input(INPUT_GET, 'fin',    FILTER_SANITIZE_STRING) ?: date('Y-m-d');
 
-// 2) Datos agrupados por empleado
 $urlGrp = API_BASE 
         . "admin_dashboard/incidencias_por_empleado.php"
         . "?inicio={$inicio}&fin={$fin}";
 $jsonGrp = @file_get_contents($urlGrp);
 $dataGrp = json_decode($jsonGrp, true)['data'] ?? [];
 
-// 3) Datos de resumen para gráficos
 $urlEst  = API_BASE 
          . "admin_dashboard/resumen_estadistico.php?inicio={$inicio}&fin={$fin}";
 $jsonEst = @file_get_contents($urlEst);
@@ -24,7 +18,6 @@ $dataEst = json_decode($jsonEst, true)['data'] ?? [];
 $porEstado = $dataEst['por_estado'] ?? [];
 $porTipo   = $dataEst['por_tipo']   ?? [];
 
-// 4) Preparar configuraciones QuickChart
 function fetchChartImage(string $config, string $out) {
     $url = 'https://quickchart.io/chart?c=' . rawurlencode($config)
          . '&width=600&height=300&format=png';
@@ -65,23 +58,18 @@ $temp2 = __DIR__ . '/chart_tipo.png';
 fetchChartImage($configEstado, $temp1);
 fetchChartImage($configTipo,   $temp2);
 
-// 5) Generación del PDF
 $pdf = new FPDF();
 $pdf->AddPage();
 
-// Encabezado
 $pdf->SetFont('Arial','B',14);
 $pdf->Cell(0,10,'Reporte de Incidencias por Empleado',0,1,'C');
 $pdf->SetFont('Arial','',12);
 $pdf->Cell(0,10,"Desde: $inicio   Hasta: $fin",0,1);
 $pdf->Ln(4);
 
-// 6) Tabla por empleado
 foreach ($dataGrp as $emp) {
-    // Nombre del empleado
     $pdf->SetFont('Arial','B',12);
     $pdf->Cell(0,8, utf8_decode($emp['empleado']), 0,1);
-    // Cabecera de columnas
     $pdf->SetFont('Arial','B',10);
     $pdf->Cell(20,8,'ID',1);
     $pdf->Cell(50,8,'Tipo',1);
@@ -100,7 +88,6 @@ foreach ($dataGrp as $emp) {
     $pdf->Ln(4);
 }
 
-// 7) Gráficos en nueva página
 $pdf->AddPage();
 $pdf->SetFont('Arial','B',14);
 $pdf->Cell(0,10,'Resumen Gráfico',0,1,'C');
@@ -108,10 +95,8 @@ $pdf->Image($temp1, 15, 30, 180);
 $pdf->Ln(95);
 $pdf->Image($temp2, 15, null, 180);
 
-// 8) Limpieza de temporales
 @unlink($temp1);
 @unlink($temp2);
 
-// 9) Salida al navegador
 $pdf->Output('I', "incidencias_por_empleado_{$inicio}_a_{$fin}.pdf");
 exit;
