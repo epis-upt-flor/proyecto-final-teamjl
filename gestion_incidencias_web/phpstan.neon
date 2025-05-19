@@ -1,0 +1,12 @@
+parameters:
+  level: max              # o el nivel que prefieras
+  paths:
+    - admin/
+    - api/src/
+  excludePaths:
+    # Evita todo el código de FPDF y tutoriales
+    - admin/reporte/fpdf/*  # ignora la librería FPDF
+    - admin/reporte/fpdf/tutorial/*  # ignora los ejemplos/tutos
+    # Evita scripts de generación directa que usan require_once relativos
+    - admin/reporte/generar_excel.php
+    - admin/reporte/generar_pdf.php
