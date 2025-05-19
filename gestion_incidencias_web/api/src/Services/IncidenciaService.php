@@ -11,9 +11,9 @@ class IncidenciaService
         return IncidenciaRepository::obtenerTodas();
     }
 
-    public static function asignarEmpleado(int $incidenciaId, int $empleadoId): bool
+    public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId): bool
     {
-        return IncidenciaRepository::asignarEmpleado($incidenciaId, $empleadoId);
+        return IncidenciaRepository::asignarEmpleado($incidenciaId, $empleadoId, $prioridadId);
     }
 
     public static function obtenerPorEmpleado(int $empleadoId): array

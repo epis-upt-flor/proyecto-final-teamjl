@@ -34,14 +34,22 @@ class IncidenciaController
 
     public static function asignarEmpleado(array $data): void
     {
-        if (empty($data['incidencia_id']) || empty($data['empleado_id'])) {
+        if (
+            empty($data['incidencia_id']) ||
+            empty($data['empleado_id']) ||
+            empty($data['prioridad_id'])
+        ) {
             Response::error("Datos incompletos para la asignación", 422);
         }
 
-        $asignado = IncidenciaService::asignarEmpleado($data['incidencia_id'], $data['empleado_id']);
+        $ok = IncidenciaService::asignarEmpleado(
+            (int)$data['incidencia_id'],
+            (int)$data['empleado_id'],
+            (int)$data['prioridad_id']
+        );
 
-        if ($asignado) {
-            Response::success([], "Incidencia asignada correctamente");
+        if ($ok) {
+            Response::success([], "Incidencia asignada y priorizada");
         } else {
             Response::error("Error al asignar la incidencia", 500);
         }

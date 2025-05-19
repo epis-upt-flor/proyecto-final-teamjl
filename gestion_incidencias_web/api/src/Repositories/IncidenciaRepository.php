@@ -32,15 +32,20 @@ class IncidenciaRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function asignarEmpleado(int $incidenciaId, int $empleadoId): bool
+    public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId): bool
     {
         $pdo = Database::getInstance();
-
-        $stmt = $pdo->prepare("UPDATE incidencia SET asignado_a = :empleado_id WHERE id = :incidencia_id");
-
+        $sql = "
+        UPDATE incidencia
+            SET asignado_a   = :empleado_id,
+                prioridad_id = :prioridad_id
+        WHERE id = :incidencia_id
+        ";
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
-            'empleado_id' => $empleadoId,
-            'incidencia_id' => $incidenciaId
+            'empleado_id'    => $empleadoId,
+            'prioridad_id'   => $prioridadId,
+            'incidencia_id'  => $incidenciaId
         ]);
     }
 

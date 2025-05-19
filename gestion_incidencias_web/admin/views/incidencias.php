@@ -5,7 +5,6 @@
 <?php if (!empty($errorInc)): ?>
   <div class="alert alert-danger"><?= htmlspecialchars($errorInc) ?></div>
 <?php endif; ?>
-
 <?php if (!empty($errorEmp)): ?>
   <div class="alert alert-warning"><?= htmlspecialchars($errorEmp) ?></div>
 <?php endif; ?>
@@ -17,7 +16,7 @@
         <th>ID</th>
         <th>Tipo</th>
         <th>Estado</th>
-        <th>Prioridad</th>
+        <th>Prioridad</th>        <!-- Mantiene su columna -->
         <th>Descripción</th>
         <th>Ubicación</th>
         <th>Fecha</th>
@@ -35,47 +34,38 @@
             <td><?= htmlspecialchars($inc['id']) ?></td>
             <td><?= htmlspecialchars($inc['tipo']) ?></td>
             <td><?= htmlspecialchars($inc['estado']) ?></td>
+
+            <!-- Columna de selector de prioridad -->
             <td>
               <?php if ($inc['estado'] === 'Pendiente'): ?>
-                <div class="d-flex align-items-center">
-                  <select
-                    id="prio-select-<?= $inc['id'] ?>"
-                    class="form-select form-select-sm"
-                  >
-                    <option value="">Seleccionar</option>
-                    <?php foreach ($prioridades as $p): ?>
-                      <option
-                        value="<?= $p['id'] ?>"
-                        <?= ($inc['prioridad'] ?? '') === $p['prioridad']
-                              ? 'selected' 
-                              : '' ?>
-                      >
-                        <?= htmlspecialchars($p['prioridad']) ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
-                  <button
-                    onclick="assignPrioridad(<?= $inc['id'] ?>)"
-                    class="btn btn-sm btn-secondary ms-2"
-                  >
-                    ✔
-                  </button>
-                </div>
+                <select class="form-select form-select-sm"
+                        id="select-prio-<?= $inc['id'] ?>">
+                  <option value="">Prioridad…</option>
+                  <?php foreach ($prioridades as $p): ?>
+                    <option value="<?= htmlspecialchars($p['id']) ?>">
+                      <?= htmlspecialchars($p['prioridad']) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
               <?php else: ?>
                 <?= !empty($inc['prioridad'])
-                      ? htmlspecialchars($inc['prioridad'])
-                      : '<span class="text-muted">—</span>' ?>
+                     ? htmlspecialchars($inc['prioridad'])
+                     : '<span class="text-muted">—</span>'
+                ?>
               <?php endif; ?>
             </td>
 
             <td><?= htmlspecialchars($inc['descripcion']) ?></td>
             <td><?= htmlspecialchars($inc['latitud']) ?>, <?= htmlspecialchars($inc['longitud']) ?></td>
             <td><?= htmlspecialchars($inc['fecha_reporte']) ?></td>
+
             <td>
               <?php if ($inc['estado'] === 'Pendiente'): ?>
                 <div class="d-flex">
-                  <select class="form-select form-select-sm" id="select-<?= $inc['id'] ?>">
-                    <option value="">Seleccionar</option>
+                  <!-- selector de empleado -->
+                  <select class="form-select form-select-sm"
+                          id="select-emp-<?= $inc['id'] ?>">
+                    <option value="">Empleado…</option>
                     <?php foreach ($empleados as $emp): ?>
                       <option value="<?= htmlspecialchars($emp['id']) ?>">
                         <?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellido']) ?>
@@ -83,10 +73,9 @@
                     <?php endforeach; ?>
                   </select>
                   <button
-                    onclick="assignEmpleado(<?= $inc['id'] ?>)"
-                    class="btn btn-sm btn-primary ms-2">
-                    Asignar
-                  </button>
+                    onclick="assignIncidencia(<?= $inc['id'] ?>)"
+                    class="btn btn-sm btn-primary ms-2"
+                  >✔</button>
                 </div>
               <?php else: ?>
                 <span class="text-muted">—</span>
@@ -102,29 +91,30 @@
 <script>
   const API_BASE = '<?= API_BASE ?>';
 
-  function assignEmpleado(incidenciaId) {
-    const select = document.getElementById(`select-${incidenciaId}`);
-    const empleadoId = select.value;
-    if (!empleadoId) {
-      return alert('Seleccione un empleado.');
+  function assignIncidencia(id) {
+    const selEmp  = document.getElementById(`select-emp-${id}`);
+    const selPrio = document.getElementById(`select-prio-${id}`);
+    const empleado_id  = parseInt(selEmp.value, 10);
+    const prioridad_id = parseInt(selPrio.value, 10);
+
+    if (!empleado_id || !prioridad_id) {
+      return alert('Seleccione empleado y prioridad.');
     }
 
     fetch(`${API_BASE}admin_dashboard/asignar_incidencia.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ incidencia_id: incidenciaId, empleado_id: parseInt(empleadoId, 10) })
+      body: JSON.stringify({ incidencia_id: id, empleado_id, prioridad_id })
     })
-    .then(res => res.json())
+    .then(r => r.json())
     .then(json => {
       if (json.success) {
-        alert('✅ Incidencia asignada correctamente');
+        alert('✅ Incidencia actualizada con prioridad.');
         window.location.reload();
       } else {
-        alert('❌ Error: ' + (json.message || 'Falló la asignación'));
+        alert('❌ ' + (json.message||'Error al asignar'));
       }
     })
-    .catch(() => {
-      alert('❌ No se pudo conectar al servidor.');
-    });
+    .catch(() => alert('❌ No se pudo conectar.'));
   }
 </script>

@@ -10,5 +10,13 @@
 
     $data = json_decode(file_get_contents("php://input"), true);
 
+    if (
+        !isset($data['incidencia_id']) ||
+        !isset($data['empleado_id']) ||
+        !isset($data['prioridad_id'])
+    ) {
+        Response::error("Faltan datos", 422);
+    }
+
     IncidenciaController::asignarEmpleado($data);
 ?>
