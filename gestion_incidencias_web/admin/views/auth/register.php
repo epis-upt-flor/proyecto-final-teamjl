@@ -1,4 +1,4 @@
-<?php 
+<?php
 $title = 'Crear Cuenta';
 ?>
 

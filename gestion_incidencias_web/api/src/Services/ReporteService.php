@@ -1,16 +1,16 @@
 <?php
-    namespace App\Services;
 
-    use App\Repositories\ReporteRepository;
+namespace App\Services;
 
-    class ReporteService
+use App\Repositories\ReporteRepository;
+
+class ReporteService
+{
+    public static function obtenerResumen(): array
     {
-        public static function obtenerResumen(): array
-        {
-            return [
-                'por_estado' => ReporteRepository::contarPorEstado(),
-                'por_tipo' => ReporteRepository::contarPorTipo()
-            ];
-        }
+        return [
+            'por_estado' => ReporteRepository::contarPorEstado(),
+            'por_tipo' => ReporteRepository::contarPorTipo()
+        ];
     }
-?>
+}

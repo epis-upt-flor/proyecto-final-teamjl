@@ -1,13 +1,13 @@
 <?php
-    namespace App\Services;
 
-    use App\Repositories\EmpleadoRepository;
+namespace App\Services;
 
-    class EmpleadoService
+use App\Repositories\EmpleadoRepository;
+
+class EmpleadoService
+{
+    public static function obtenerTodos(): array
     {
-        public static function obtenerTodos(): array
-        {
-            return EmpleadoRepository::obtenerTodos();
-        }
+        return EmpleadoRepository::obtenerTodos();
     }
-?>
+}

@@ -1,5 +1,5 @@
-<?php 
-$title = 'Iniciar Sesión'; 
+<?php
+$title = 'Iniciar Sesión';
 ?>
 
 <section class="auth-form">

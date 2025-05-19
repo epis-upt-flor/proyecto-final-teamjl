@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Core\Database;
@@ -32,9 +33,9 @@ class IncidenciaRepository
     public static function asignarEmpleado(int $incidenciaId, int $empleadoId): bool
     {
         $pdo = Database::getInstance();
-    
+
         $stmt = $pdo->prepare("UPDATE incidencia SET asignado_a = :empleado_id WHERE id = :incidencia_id");
-    
+
         return $stmt->execute([
             'empleado_id' => $empleadoId,
             'incidencia_id' => $incidenciaId
@@ -127,4 +128,3 @@ class IncidenciaRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-?>

@@ -61,7 +61,7 @@ $title = 'Reportes Estadísticos';
 
 <script>
   const porEstado = <?= json_encode($por_estado, JSON_THROW_ON_ERROR) ?>;
-  const porTipo   = <?= json_encode($por_tipo,   JSON_THROW_ON_ERROR) ?>;
+  const porTipo   = <?= json_encode($por_tipo, JSON_THROW_ON_ERROR) ?>;
 
   // Gráfico de estados
   const estados = porEstado.map(e => e.estado);

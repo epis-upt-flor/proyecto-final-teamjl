@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Core\Response;
@@ -107,4 +108,3 @@ class CiudadanoController
         }
     }
 }
-?>

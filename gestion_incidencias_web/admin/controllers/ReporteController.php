@@ -29,8 +29,9 @@ class ReporteController
         $inicio = urlencode($_GET['inicio'] ?? date('Y-m-01'));
         $fin    = urlencode($_GET['fin']    ?? date('Y-m-d'));
 
-        header('Location: ' 
-            . ADMIN_BASE 
+        header(
+            'Location: '
+            . ADMIN_BASE
             . "reporte/generar_pdf.php?inicio={$inicio}&fin={$fin}"
         );
         exit;
@@ -42,8 +43,9 @@ class ReporteController
         $inicio = urlencode($_GET['inicio'] ?? date('Y-m-01'));
         $fin    = urlencode($_GET['fin']    ?? date('Y-m-d'));
 
-        header('Location: ' 
-            . ADMIN_BASE 
+        header(
+            'Location: '
+            . ADMIN_BASE
             . "reporte/generar_excel.php?inicio={$inicio}&fin={$fin}"
         );
         exit;

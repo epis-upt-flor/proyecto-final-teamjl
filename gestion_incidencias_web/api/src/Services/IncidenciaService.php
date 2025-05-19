@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Repositories\IncidenciaRepository;
@@ -35,4 +36,3 @@ class IncidenciaService
         return IncidenciaRepository::registrarCiudadano($celular);
     }
 }
-?>

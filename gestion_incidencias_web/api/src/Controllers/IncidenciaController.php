@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Services\IncidenciaService;
@@ -68,4 +69,3 @@ class IncidenciaController
         }
     }
 }
-?>

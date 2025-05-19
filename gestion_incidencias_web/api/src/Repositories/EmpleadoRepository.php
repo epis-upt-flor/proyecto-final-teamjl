@@ -1,19 +1,19 @@
 <?php
-    namespace App\Repositories;
 
-    use App\Core\Database;
-    use PDO;
+namespace App\Repositories;
 
-    class EmpleadoRepository
+use App\Core\Database;
+use PDO;
+
+class EmpleadoRepository
+{
+    public static function obtenerTodos(): array
     {
-        public static function obtenerTodos(): array
-        {
-            $pdo = Database::getInstance();
+        $pdo = Database::getInstance();
 
-            $query = "SELECT id, dni, nombre, apellido, email FROM empleado ORDER BY id ASC";
+        $query = "SELECT id, dni, nombre, apellido, email FROM empleado ORDER BY id ASC";
 
-            $stmt = $pdo->query($query);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
+        $stmt = $pdo->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-?>
+}

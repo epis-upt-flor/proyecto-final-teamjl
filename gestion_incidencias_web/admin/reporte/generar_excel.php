@@ -1,4 +1,5 @@
 <?php
+
 require_once("../../inc/db.php");
 
 $inicio = $_GET['inicio'] ?? date('Y-m-01');
