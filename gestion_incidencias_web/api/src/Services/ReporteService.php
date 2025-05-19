@@ -13,4 +13,9 @@ class ReporteService
             'por_tipo' => ReporteRepository::contarPorTipo()
         ];
     }
+
+    public static function obtenerPorRango(string $inicio, string $fin): array
+    {
+        return ReporteRepository::obtenerPorRango($inicio, $fin);
+    }
 }

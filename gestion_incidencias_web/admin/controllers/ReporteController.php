@@ -37,16 +37,13 @@ class ReporteController
         exit;
     }
 
-
     public function exportExcel()
     {
         $inicio = urlencode($_GET['inicio'] ?? date('Y-m-01'));
         $fin    = urlencode($_GET['fin']    ?? date('Y-m-d'));
-
-        header(
-            'Location: '
-            . ADMIN_BASE
-            . "reporte/generar_excel.php?inicio={$inicio}&fin={$fin}"
+        header('Location: ' 
+            . API_BASE 
+            . "admin_dashboard/reporte_csv.php?inicio={$inicio}&fin={$fin}"
         );
         exit;
     }
