@@ -1,12 +1,13 @@
 <?php
-namespace App\Services;
+    namespace App\Services;
 
-use App\Repositories\PrioridadRepository;
+    use App\Repositories\PrioridadRepository;
 
-class PrioridadService
-{
-    public static function obtenerTodas(): array
+    class PrioridadService
     {
-        return PrioridadRepository::obtenerTodos();
+        public static function obtenerTodas(): array
+        {
+            return PrioridadRepository::obtenerTodos();
+        }
     }
-}
+?>

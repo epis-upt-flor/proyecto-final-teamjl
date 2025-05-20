@@ -1,4 +1,4 @@
-<?php // admin/views/incidencias.php ?>
+<?php ?>
 
 <h2 class="mb-4 text-center"><?= htmlspecialchars($title ?? 'Listado de Incidencias') ?></h2>
 
