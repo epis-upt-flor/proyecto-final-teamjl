@@ -120,14 +120,15 @@ class IncidenciaRepository
                 i.id,
                 ti.nombre AS tipo,
                 ei.nombre AS estado,
-                pr.nivel   AS prioridad
+                pr.nivel   AS prioridad,
                 i.descripcion,
                 i.latitud,
                 i.longitud,
-                TO_CHAR(i.fecha_reporte, 'YYYY-MM-DD') AS fecha_reporte
+                TO_CHAR(i.fecha_reporte,'YYYY-MM-DD') AS fecha_reporte
             FROM incidencia i
-            INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
-            INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
+            INNER JOIN tipo_incidencia    ti ON i.tipo_id      = ti.id
+            INNER JOIN estado_incidencia  ei ON i.estado_id    = ei.id
+            LEFT JOIN prioridad           pr ON i.prioridad_id = pr.id
             WHERE i.id_celular = :id_celular
             ORDER BY i.fecha_reporte ASC
         ";
