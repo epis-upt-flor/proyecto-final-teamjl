@@ -14,9 +14,11 @@
 
         public function testRegisterRawDevuelveEnteroId(): void
         {
-            $id = AdminService::registerRaw('Test','User','test.user@example.com','pwd1234');
-            $this->assertIsInt($id);
-            $this->assertGreaterThan(0, $id);
+            // Genera un email único para evitar colisiones de la restricción UNIQUE
+            $email  = 'admin.test+' . uniqid() . '@example.com';
+            $id = AdminService::registerRaw('Test','User',$email,'pwd1234');
+            $this->assertIsInt($id, 'registerRaw debe devolver un entero');
+            $this->assertGreaterThan(0, $id, 'El ID devuelto debe ser mayor que 0');
         }
     }
 ?>

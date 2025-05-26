@@ -22,10 +22,20 @@
 
         public function testLoginRawWithValidCredentials(): void
         {
-            $email    = 'empleado.test@ejemplo.com';
-            $password = 'Test1234';
+            // Creamos un empleado de prueba
+            $uniqueEmail = 'login.emp+' . uniqid() . '@ejemplo.com';
+            $password    = 'LoginTest!45';
+            $createdId   = EmpleadoService::registerRaw(
+                'LoginName',
+                'LoginLast',
+                '87654321',
+                $uniqueEmail,
+                $password
+            );
+            $this->assertIsInt($createdId);
 
-            $resp = EmpleadoService::loginRaw($email, $password);
+            // Ahora debe poder hacer login con esas credenciales
+            $resp = EmpleadoService::loginRaw($uniqueEmail, $password);
             $this->assertIsArray($resp, 'loginRaw debería devolver un array para credenciales válidas');
             $this->assertArrayHasKey('id', $resp);
             $this->assertArrayHasKey('token', $resp);
@@ -35,15 +45,17 @@
 
         public function testRegisterRawReturnsNewId(): void
         {
-            $uniqueEmail = 'nuevo.test+' . uniqid() . '@ejemplo.com';
+            $uniqueEmail = 'test.emp+' . uniqid() . '@ejemplo.com';
+            $password    = 'PassTest!23';
 
             $newId = EmpleadoService::registerRaw(
                 'TestNombre',
                 'TestApellido',
                 '12345678',
                 $uniqueEmail,
-                'Passw0rd!'
+                $password
             );
+
             $this->assertIsInt($newId, 'registerRaw debe devolver un entero como nuevo ID');
             $this->assertGreaterThan(0, $newId, 'El ID devuelto debe ser mayor que 0');
         }

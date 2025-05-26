@@ -19,7 +19,9 @@
             string $email,
             string $password
         ): int {
-            session_start();
+            if (php_sapi_name() !== 'cli' && session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             $creadoPor = $_SESSION['usuario_id'] ?? null;
 
             return EmpleadoRepository::create([
