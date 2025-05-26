@@ -1,22 +1,31 @@
 <?php
-
     class IncidenciasController
     {
         public function index()
         {
-            $incJson  = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/incidencias.php'), true);
+            try {
+                $incResp = apiRequest('admin_dashboard/incidencias.php', 'GET');
+                $incidencias = $incResp['data'] ?? [];
 
-            $empJson  = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/empleados.php'), true);
+                $empResp = apiRequest('admin_dashboard/empleados.php', 'GET');
+                $empleados = $empResp['data'] ?? [];
 
-            $prioJson = json_decode(@file_get_contents(API_BASE . 'admin_dashboard/prioridad.php'), true);
+                $prioResp = apiRequest('admin_dashboard/prioridad.php', 'GET');
+                $prioridades = $prioResp['data'] ?? [];
+            } catch (\Exception $e) {
+                error_log("Error cargando Incidencias: " . $e->getMessage());
+                $incidencias  = [];
+                $empleados    = [];
+                $prioridades  = [];
+                $errorInc     = $e->getMessage();
+            }
 
             view('incidencias', [
-                'incidencias' => $incJson['data']      ?? [],
-                'empleados'   => $empJson['data']      ?? [],
-                'prioridades' => $prioJson['data']     ?? [],
+                'incidencias' => $incidencias,
+                'empleados'   => $empleados,
+                'prioridades' => $prioridades,
+                'errorInc'    => $errorInc ?? null,
             ]);
         }
-
     }
-
 ?>

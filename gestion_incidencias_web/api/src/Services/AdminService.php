@@ -17,8 +17,9 @@
 
             $token = Auth::generarToken([
                 'admin_id' => $admin['id'],
-                'nombre' => $admin['nombre'],
-                'email' => $admin['email']
+                'nombre'   => $admin['nombre'],
+                'email'    => $admin['email'],
+                'role'     => 'administrador'
             ]);
 
             return [
@@ -29,10 +30,12 @@
             ];
         }
 
-        public static function registrar(array $data): bool
-        {
-            $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
-            return AdminRepository::registrar($data);
+        public static function registerRaw(string $nombre,string $apellido,string $email,string $password): int {
+            return AdminRepository::create([
+            'nombre'=>$nombre,'apellido'=>$apellido,
+            'email'=>$email,'password'=>password_hash($password,PASSWORD_BCRYPT),
+            'rol'=>'administrador'
+            ]);
         }
     }
 

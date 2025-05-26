@@ -1,12 +1,8 @@
 <?php
-
     namespace App\Controllers;
 
     use App\Services\AdminService;
-    use App\Core\Database;
-    use App\Core\Auth;
     use App\Core\Response;
-    use PDO;
     use Exception;
 
     class AdminController
@@ -18,19 +14,19 @@
             }
 
             $admin = AdminService::login($data['email'], $data['password']);
-
             if (!$admin) {
                 Response::error("Credenciales incorrectas", 401);
             }
 
             session_start();
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_nombre'] = $admin['nombre'];
+            $_SESSION['usuario_id']     = $admin['id'];
+            $_SESSION['usuario_nombre'] = $admin['nombre'];
 
             Response::success([
-                'admin_id' => $admin['id'],
+                'id'     => $admin['id'],
                 'nombre' => $admin['nombre'],
-                'token' => $admin['token']
+                'role'   => 'administrador',
+                'token'  => $admin['token']
             ], "Inicio de sesión exitoso");
         }
 
@@ -45,18 +41,56 @@
                 Response::error("Todos los campos son obligatorios", 422);
             }
 
-            $existente = AdminService::login($data['email'], $data['password']);
-            if ($existente) {
-                Response::error("Ya existe un administrador con ese email", 409);
+            $idNuevo = AdminService::registerRaw(
+                $data['nombre'],
+                $data['apellido'],
+                $data['email'],
+                $data['password']
+            );
+
+            if (!$idNuevo) {
+                Response::error("Error al registrar el usuario", 500);
             }
 
-            $exito = AdminService::registrar($data);
+            Response::success(
+                ['id' => $idNuevo],
+                "Usuario administrador registrado correctamente"
+            );
+        }
 
-            if ($exito) {
-                Response::success([], "Administrador registrado correctamente");
-            } else {
-                Response::error("Error al registrar el administrador", 500);
+        public static function loginRaw(string $email, string $password): array
+        {
+            $admin = AdminService::login($email, $password);
+            if (!$admin) {
+                throw new Exception("No admin");
             }
+            return [
+                'id'       => $admin['id'],
+                'nombre'   => $admin['nombre'],
+                'apellido' => $admin['apellido'] ?? '',
+                'email'    => $admin['email'],
+                'token'    => $admin['token'],
+                'role'     => 'administrador'
+            ];
+        }
+
+        public static function registerRaw(array $data): int
+        {
+            if (
+                empty($data['nombre'])   ||
+                empty($data['apellido']) ||
+                empty($data['email'])    ||
+                empty($data['password'])
+            ) {
+                throw new Exception("Todos los campos son obligatorios", 422);
+            }
+
+            return AdminService::registerRaw(
+                $data['nombre'],
+                $data['apellido'],
+                $data['email'],
+                $data['password']
+            );
         }
     }
 

@@ -78,7 +78,6 @@
       $pdf->Cell(40, 8, 'Estado', 1);
       $pdf->Cell(40, 8, 'Fecha', 1);
       $pdf->Ln();
-      // Filas
       $pdf->SetFont('Arial', '', 10);
       foreach ($emp['incidencias'] as $inc) {
           $pdf->Cell(20, 8, $inc['id'], 1);

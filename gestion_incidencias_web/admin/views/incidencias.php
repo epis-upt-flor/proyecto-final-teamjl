@@ -16,7 +16,7 @@
         <th>ID</th>
         <th>Tipo</th>
         <th>Estado</th>
-        <th>Prioridad</th>        <!-- Mantiene su columna -->
+        <th>Prioridad</th>
         <th>Descripción</th>
         <th>Ubicación</th>
         <th>Fecha</th>
@@ -35,7 +35,6 @@
             <td><?= htmlspecialchars($inc['tipo']) ?></td>
             <td><?= htmlspecialchars($inc['estado']) ?></td>
 
-            <!-- Columna de selector de prioridad -->
             <td>
               <?php if ($inc['estado'] === 'Pendiente'): ?>
                 <select class="form-select form-select-sm"
@@ -62,7 +61,6 @@
             <td>
               <?php if ($inc['estado'] === 'Pendiente'): ?>
                 <div class="d-flex">
-                  <!-- selector de empleado -->
                   <select class="form-select form-select-sm"
                           id="select-emp-<?= $inc['id'] ?>">
                     <option value="">Empleado…</option>
@@ -90,6 +88,7 @@
 
 <script>
   const API_BASE = '<?= API_BASE ?>';
+  const API_TOKEN = '<?= $_SESSION['user_token'] ?? '' ?>';  // <— aquí
 
   function assignIncidencia(id) {
     const selEmp  = document.getElementById(`select-emp-${id}`);
@@ -103,7 +102,10 @@
 
     fetch(`${API_BASE}admin_dashboard/asignar_incidencia.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + API_TOKEN
+      },
       body: JSON.stringify({ incidencia_id: id, empleado_id, prioridad_id })
     })
     .then(r => r.json())

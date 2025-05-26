@@ -10,27 +10,39 @@
         public static function obtenerPorEmail(string $email): ?array
         {
             $pdo = Database::getInstance();
-            $stmt = $pdo->prepare("SELECT * FROM administrador WHERE email = :email");
+            $sql = "
+                SELECT *
+                FROM usuario
+                WHERE email = :email
+                AND rol = 'administrador'
+                LIMIT 1
+            ";
+            $stmt = $pdo->prepare($sql);
             $stmt->execute(['email' => $email]);
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $admin ?: null;
         }
 
-        public static function registrar(array $data): bool
-        {
+        public static function create(array $data): int {
             $pdo = Database::getInstance();
             $stmt = $pdo->prepare("
-                    INSERT INTO administrador (nombre, apellido, email, password)
-                    VALUES (:nombre, :apellido, :email, :password)
-                ");
-
-            return $stmt->execute([
-                'nombre' => $data['nombre'],
-                'apellido' => $data['apellido'],
-                'email' => $data['email'],
-                'password' => $data['password']
+                INSERT INTO usuario
+                (nombre,apellido,dni,email,password,rol,creado_por)
+                VALUES
+                (:nombre,:apellido,:dni,:email,:password,:rol,:creado_por)
+                RETURNING id
+            ");
+            $stmt->execute([
+            'nombre'=>$data['nombre'],
+            'apellido'=>$data['apellido'],
+            'dni'=>$data['dni']        ?? null,
+            'email'=>$data['email'],
+            'password'=>$data['password'],
+            'rol'=>$data['rol'],
+            'creado_por'=>$data['creado_por']  ?? null
             ]);
+            return (int)$stmt->fetchColumn();
         }
     }
 

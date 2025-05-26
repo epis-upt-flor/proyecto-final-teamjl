@@ -13,6 +13,7 @@ $title = 'Crear Cuenta';
     <?php endif; ?>
 
     <form method="post" action="<?= url('auth/register') ?>">
+      <input type="hidden" name="role" value="administrador">
       <div class="mb-3">
         <label for="nombre" class="form-label">Nombre</label>
         <input

@@ -1,102 +1,114 @@
 <?php
-
     namespace App\Controllers;
 
     use App\Services\EmpleadoService;
     use App\Core\Response;
+    use App\Core\Auth;
+    use Exception;
 
     class EmpleadoController
     {
         public static function registrar(array $data): void
         {
-            try {
-                $nombre = trim($data['nombre'] ?? '');
-                $apellido = trim($data['apellido'] ?? '');
-                $dni = trim($data['dni'] ?? '');
-                $email = trim($data['email'] ?? '');
-                $password = trim($data['password'] ?? '');
-
-                if (empty($nombre) || empty($apellido) || empty($dni) || empty($email) || empty($password)) {
-                    \App\Core\Response::error("Todos los campos son obligatorios", 422);
-                }
-
-                $pdo = \App\Core\Database::getInstance();
-
-                $stmt = $pdo->prepare("SELECT id FROM empleado WHERE dni = :dni OR email = :email");
-                $stmt->execute(['dni' => $dni, 'email' => $email]);
-                if ($stmt->fetch()) {
-                    \App\Core\Response::error("Ya existe un empleado con ese correo o DNI", 409);
-                }
-
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
-
-                $insert = $pdo->prepare("
-                        INSERT INTO empleado (nombre, apellido, dni, email, password)
-                        VALUES (:nombre, :apellido, :dni, :email, :password)
-                    ");
-                $insert->execute([
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'dni' => $dni,
-                    'email' => $email,
-                    'password' => $hashed
-                ]);
-
-                \App\Core\Response::success([], "Empleado registrado correctamente");
-            } catch (\Exception $e) {
-                \App\Core\Response::error("Error al registrar: " . $e->getMessage(), 500);
+            if (
+                empty($data['nombre']) ||
+                empty($data['apellido']) ||
+                empty($data['dni']) ||
+                empty($data['email']) ||
+                empty($data['password'])
+            ) {
+                Response::error("Todos los campos son obligatorios", 422);
             }
+
+            $idNuevo = EmpleadoService::registerRaw(
+                $data['nombre'],
+                $data['apellido'],
+                $data['dni'],
+                $data['email'],
+                $data['password']
+            );
+            
+            if (!$idNuevo) {
+                Response::error("Error al registrar el empleado", 500);
+            }
+
+            Response::success(
+                ['id' => $idNuevo],
+                "Empleado registrado correctamente"
+            );
         }
 
         public static function login(array $data): void
         {
-            try {
-                $email = trim($data['email'] ?? '');
-                $password = trim($data['password'] ?? '');
-
-                if (empty($email) || empty($password)) {
-                    \App\Core\Response::error("Correo y contraseña obligatorios", 422);
-                }
-
-                $pdo = \App\Core\Database::getInstance();
-                $stmt = $pdo->prepare("SELECT id, nombre, apellido, email, password FROM empleado WHERE email = :email");
-                $stmt->execute(['email' => $email]);
-                $empleado = $stmt->fetch();
-
-                if (!$empleado || !password_verify($password, $empleado['password'])) {
-                    \App\Core\Response::error("Credenciales inválidas", 401);
-                }
-
-                $token = \App\Core\Auth::generarToken([
-                    'id' => $empleado['id'],
-                    'nombre' => $empleado['nombre'],
-                    'apellido' => $empleado['apellido'],
-                    'email' => $empleado['email']
-                ]);
-
-                \App\Core\Response::success([
-                    'empleado' => [
-                        'id' => $empleado['id'],
-                        'nombre' => $empleado['nombre'],
-                        'apellido' => $empleado['apellido'],
-                        'email' => $empleado['email']
-                    ],
-                    'token' => $token
-                ], "Login exitoso");
-            } catch (\Exception $e) {
-                \App\Core\Response::error("Error al iniciar sesión: " . $e->getMessage(), 500);
+            if (empty($data['email']) || empty($data['password'])) {
+                Response::error("Correo y contraseña obligatorios", 422);
             }
+
+            $resp = EmpleadoService::loginRaw($data['email'], $data['password']);
+            if (!$resp) {
+                Response::error("Credenciales inválidas", 401);
+            }
+
+            session_start();
+            $_SESSION['usuario_id']     = $resp['id'];
+            $_SESSION['usuario_nombre'] = $resp['nombre'];
+
+            Response::success([
+                'id'     => $resp['id'],
+                'nombre' => $resp['nombre'],
+                'role'   => 'empleado'
+            ], "Login exitoso");
         }
 
+        public static function loginRaw(string $email, string $password): ?array
+        {
+            $emp = EmpleadoService::loginRaw($email, $password);
+            if (!$emp) {
+                return null;
+            }
+            return [
+                'id'       => $emp['id'],
+                'nombre'   => $emp['nombre'],
+                'apellido' => $emp['apellido'],
+                'email'    => $emp['email'],
+                'role'     => 'empleado'
+            ];
+        }
+
+        public static function registerRaw(array $data): int
+        {
+            if (
+                empty($data['nombre'])   ||
+                empty($data['apellido']) ||
+                empty($data['dni'])      ||
+                empty($data['email'])    ||
+                empty($data['password'])
+            ) {
+                throw new Exception("Todos los campos son obligatorios (incluye dni)", 422);
+            }
+
+            if (!isset($data['creado_por']) && !empty($_SESSION['usuario_id'])) {
+                $data['creado_por'] = $_SESSION['usuario_id'];
+            }
+
+            return EmpleadoService::registerRaw(
+                $data['nombre'],
+                $data['apellido'],
+                $data['dni'],
+                $data['email'],
+                $data['password'],
+                $data['creado_por'] ?? null
+            );
+        }
+        
         public static function listar(): void
         {
             try {
-                $empleados = EmpleadoService::obtenerTodos();
-                Response::success($empleados, "Empleados encontrados");
-            } catch (\Exception $e) {
+                $lista = EmpleadoService::obtenerTodos();
+                Response::success($lista, "Empleados encontrados");
+            } catch (Exception $e) {
                 Response::error("Error al obtener empleados: " . $e->getMessage(), 500);
             }
         }
     }
-
 ?>

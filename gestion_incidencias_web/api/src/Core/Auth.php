@@ -20,7 +20,7 @@
             $payload = [
                 'iat' => time(),
                 'exp' => time() + $expiracionSegundos,
-                'data' => $datos
+                'data' => $datos + ['role' => $datos['role'] ?? '']
             ];
 
             return JWT::encode($payload, self::$secret, 'HS256');
