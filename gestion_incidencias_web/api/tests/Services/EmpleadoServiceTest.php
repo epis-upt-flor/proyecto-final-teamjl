@@ -22,7 +22,6 @@
 
         public function testLoginRawWithValidCredentials(): void
         {
-            // Creamos un empleado de prueba
             $uniqueEmail = 'login.emp+' . uniqid() . '@ejemplo.com';
             $password    = 'LoginTest!45';
             $createdId   = EmpleadoService::registerRaw(
