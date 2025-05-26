@@ -14,7 +14,6 @@
 
         public function testRegisterRawDevuelveEnteroId(): void
         {
-            // Genera un email único para evitar colisiones de la restricción UNIQUE
             $email  = 'admin.test+' . uniqid() . '@example.com';
             $id = AdminService::registerRaw('Test','User',$email,'pwd1234');
             $this->assertIsInt($id, 'registerRaw debe devolver un entero');

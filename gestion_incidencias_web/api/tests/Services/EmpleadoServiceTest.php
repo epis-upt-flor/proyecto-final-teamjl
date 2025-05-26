@@ -34,7 +34,6 @@
             );
             $this->assertIsInt($createdId);
 
-            // Ahora debe poder hacer login con esas credenciales
             $resp = EmpleadoService::loginRaw($uniqueEmail, $password);
             $this->assertIsArray($resp, 'loginRaw debería devolver un array para credenciales válidas');
             $this->assertArrayHasKey('id', $resp);
