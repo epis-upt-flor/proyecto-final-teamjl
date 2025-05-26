@@ -5,6 +5,8 @@
     use App\Core\Response;
     use App\Controllers\ReporteController;
 
+    // —————————————————————————————————————————————
+    // 1) Verificar token Bearer
     $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
     if (!preg_match('/^Bearer\s+(.+)$/', $hdr, $m)) {
         Response::error("Token requerido", 401);
@@ -14,9 +16,11 @@
     } catch (\Exception $e) {
         Response::error("Token inválido", 401);
     }
+    // 2) Solo administradores
     if (($user['role'] ?? '') !== 'administrador') {
         Response::error("Permiso denegado", 403);
     }
+    // —————————————————————————————————————————————
 
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         Response::error('Método no permitido', 405);

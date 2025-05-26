@@ -74,6 +74,7 @@ $title = 'Reportes Estadísticos';
     }
   });
 
+  // Gráfico de tipos
   const tipos = porTipo.map(t => t.tipo);
   const totalesTipo = porTipo.map(t => t.total);
   new Chart(document.getElementById('graficoTipo'), {

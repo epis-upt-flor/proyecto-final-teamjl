@@ -19,7 +19,8 @@
             string $email,
             string $password
         ): int {
-            $creadoPor = null;
+            session_start();
+            $creadoPor = $_SESSION['usuario_id'] ?? null;
 
             return EmpleadoRepository::create([
                 'nombre'     => $nombre,

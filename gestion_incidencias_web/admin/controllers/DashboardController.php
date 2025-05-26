@@ -1,11 +1,14 @@
 <?php
+
     class DashboardController
     {
         public function index()
         {
             try {
+                // Llamada GET al endpoint con Bearer token
                 $result = apiRequest('admin_dashboard/resumen_incidencias.php', 'GET');
             } catch (\Exception $e) {
+                // Aquí puedes redirigir o mostrar una vista de error
                 die("Error cargando dashboard: " . $e->getMessage());
             }
 
@@ -18,4 +21,5 @@
             ]);
         }
     }
+
 ?>

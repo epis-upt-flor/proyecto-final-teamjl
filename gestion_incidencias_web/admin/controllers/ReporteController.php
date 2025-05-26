@@ -1,4 +1,5 @@
 <?php
+
     class ReporteController
     {
         public function index()
@@ -51,4 +52,5 @@
             exit;
         }
     }
+
 ?>
