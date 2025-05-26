@@ -5,8 +5,6 @@
     use App\Core\Response;
     use App\Controllers\IncidenciaController;
 
-    // —————————————————————————————————————————————
-    // 1) Verificar token Bearer
     $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
     if (!preg_match('/^Bearer\s+(.+)$/', $hdr, $m)) {
         Response::error("Token requerido", 401);
@@ -16,11 +14,9 @@
     } catch (\Exception $e) {
         Response::error("Token inválido", 401);
     }
-    // 2) Solo empleados
     if (($user['role'] ?? '') !== 'empleado') {
         Response::error("Permiso denegado", 403);
     }
-    // —————————————————————————————————————————————
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         Response::error("Método no permitido", 405);

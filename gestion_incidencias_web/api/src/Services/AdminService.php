@@ -19,7 +19,7 @@
                 'admin_id' => $admin['id'],
                 'nombre'   => $admin['nombre'],
                 'email'    => $admin['email'],
-                'role'     => 'administrador'    // ← AÑADE esta línea
+                'role'     => 'administrador'
             ]);
 
             return [

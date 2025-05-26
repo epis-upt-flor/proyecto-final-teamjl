@@ -1,48 +1,43 @@
 <?php
-require_once __DIR__ . '/../bootstrap.php';
+    require_once __DIR__ . '/../bootstrap.php';
 
-use App\Controllers\AdminController;
-use App\Controllers\EmpleadoController;
-use App\Core\Response;
+    use App\Controllers\AdminController;
+    use App\Controllers\EmpleadoController;
+    use App\Core\Response;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    Response::error("Método no permitido", 405);
-}
-
-// Leemos el body JSON
-$input    = json_decode(file_get_contents("php://input"), true);
-$email    = trim($input['email']    ?? '');
-$password = trim($input['password'] ?? '');
-
-// Validación básica
-if ($email === '' || $password === '') {
-    Response::error("Email y contraseña requeridos", 422);
-}
-
-// 1) Intentamos login como administrador
-try {
-    $admin = AdminController::loginRaw($email, $password);
-    // Si loginRaw no lanza excepción, devolvemos la respuesta estándar:
-    Response::success([
-        'id'       => $admin['id'],
-        'nombre'   => $admin['nombre'],
-        'apellido' => $admin['apellido'],
-        'role'     => 'administrador',
-        'token'    => $admin['token']
-    ], "Login administrador exitoso");
-} catch (\Exception $e) {
-    // 2) Si falla como admin, intentamos como empleado
-    try {
-        $emp = EmpleadoController::loginRaw($email, $password);
-        Response::success([
-            'id'       => $emp['id'],
-            'nombre'   => $emp['nombre'],
-            'apellido' => $emp['apellido'],
-            'role'     => 'empleado',
-            'token'    => $emp['token']
-        ], "Login empleado exitoso");
-    } catch (\Exception $e2) {
-        // 3) Si tampoco como empleado, error de credenciales
-        Response::error("Credenciales inválidas", 401);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        Response::error("Método no permitido", 405);
     }
-}
+
+    $input    = json_decode(file_get_contents("php://input"), true);
+    $email    = trim($input['email']    ?? '');
+    $password = trim($input['password'] ?? '');
+
+    if ($email === '' || $password === '') {
+        Response::error("Email y contraseña requeridos", 422);
+    }
+
+    try {
+        $admin = AdminController::loginRaw($email, $password);
+        Response::success([
+            'id'       => $admin['id'],
+            'nombre'   => $admin['nombre'],
+            'apellido' => $admin['apellido'],
+            'role'     => 'administrador',
+            'token'    => $admin['token']
+        ], "Login administrador exitoso");
+    } catch (\Exception $e) {
+        try {
+            $emp = EmpleadoController::loginRaw($email, $password);
+            Response::success([
+                'id'       => $emp['id'],
+                'nombre'   => $emp['nombre'],
+                'apellido' => $emp['apellido'],
+                'role'     => 'empleado',
+                'token'    => $emp['token']
+            ], "Login empleado exitoso");
+        } catch (\Exception $e2) {
+            Response::error("Credenciales inválidas", 401);
+        }
+    }
+?>
