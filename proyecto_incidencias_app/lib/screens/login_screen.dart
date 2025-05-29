@@ -21,17 +21,28 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = true;
         errorMessage = '';
       });
+
       final response = await AuthService.login(email, password);
+
       setState(() {
         isLoading = false;
       });
-      if (response['success'] == true) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EmpleadoScreen(user: response['data']['empleado']),
-          ),
-        );
+
+      if (response['success'] == true && response['data'] != null) {
+        // Validar que sea un mapa
+        final userData = response['data'];
+        if (userData is Map<String, dynamic>) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmpleadoScreen(user: userData),
+            ),
+          );
+        } else {
+          setState(() {
+            errorMessage = 'Respuesta inesperada del servidor.';
+          });
+        }
       } else {
         setState(() {
           errorMessage = response['message'] ?? 'Error desconocido';

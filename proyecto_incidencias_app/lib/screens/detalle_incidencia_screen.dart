@@ -6,11 +6,13 @@ import '../services/incidencias_empleado_service.dart';
 class DetalleIncidenciaScreen extends StatefulWidget {
   final int incidenciaId;
   final int empleadoId;
+  final String token;
 
   const DetalleIncidenciaScreen({
     Key? key,
     required this.incidenciaId,
     required this.empleadoId,
+    required this.token,
   }) : super(key: key);
 
   @override
@@ -32,6 +34,7 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
     final resultado = await IncidenciasEmpleadoService.obtenerIncidenciaPorId(
       widget.empleadoId,
       widget.incidenciaId,
+      token: widget.token,
     );
     setState(() {
       _incidencia = resultado;
@@ -59,7 +62,6 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
                       _buildSection('Fecha de Reporte', _incidencia!['fecha_reporte']),
                       const SizedBox(height: 16),
 
-                      // Imagen
                       if (_incidencia!['foto'] != null && _incidencia!['foto'] is Uint8List)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +89,6 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Mapa
                       if (_incidencia!['latitud'] != null && _incidencia!['longitud'] != null)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

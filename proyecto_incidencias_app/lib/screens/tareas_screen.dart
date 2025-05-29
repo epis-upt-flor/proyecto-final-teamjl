@@ -22,7 +22,20 @@ class _TareasScreenState extends State<TareasScreen> {
   }
 
   Future<void> _cargarIncidencias() async {
-    final resultado = await IncidenciasEmpleadoService.obtenerIncidenciasAsignadas(widget.user['id']);
+    final empleadoId = widget.user['id'];
+    final token = widget.user['token'];
+
+    if (empleadoId == null || token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Datos de usuario incompletos')),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final resultado = await IncidenciasEmpleadoService.obtenerIncidenciasAsignadas(empleadoId, token: token);
     setState(() {
       _incidencias = resultado;
       _isLoading = false;
@@ -30,12 +43,18 @@ class _TareasScreenState extends State<TareasScreen> {
   }
 
   Future<void> _actualizarEstado(int incidenciaId, int nuevoEstadoId) async {
-    final exito = await IncidenciasEmpleadoService.actualizarEstado(incidenciaId, nuevoEstadoId);
+    final token = widget.user['token'];
+
+    final exito = await IncidenciasEmpleadoService.actualizarEstado(incidenciaId, nuevoEstadoId, token: token);
     if (exito) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Estado actualizado')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Estado actualizado')),
+      );
       _cargarIncidencias();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al actualizar estado')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al actualizar estado')),
+      );
     }
   }
 
@@ -103,6 +122,7 @@ class _TareasScreenState extends State<TareasScreen> {
               builder: (context) => DetalleIncidenciaScreen(
                 incidenciaId: incidencia['id'],
                 empleadoId: widget.user['id'],
+                token: widget.user['token'],
               ),
             ),
           );
