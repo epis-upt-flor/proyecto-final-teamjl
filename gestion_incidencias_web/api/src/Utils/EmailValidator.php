@@ -1,15 +1,15 @@
 <?php
-namespace App\Utils;
+    namespace App\Utils;
 
-class EmailValidator
-{
-    public static function isValid(string $email): bool
+    class EmailValidator
     {
-        if (strpos($email, '@') === false) {
-            return false;
+        public static function isValid(string $email): bool
+        {
+            if (strpos($email, '@') === false) {
+                return false;
+            }
+            
+            return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
         }
-        
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
-}
 ?>
