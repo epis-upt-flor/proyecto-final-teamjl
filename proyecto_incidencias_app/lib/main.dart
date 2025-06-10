@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/phone_input_screen.dart';
+import 'views/login_screen.dart';
+import 'views/register_screen.dart';
+import 'views/phone_input_screen.dart';
 
 void main() {
   runApp(const MainApp());
