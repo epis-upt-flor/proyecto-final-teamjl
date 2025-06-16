@@ -2,20 +2,23 @@
 
     class DashboardController
     {
-        public function index()
+        public function index(): void
         {
             try {
                 $result = apiRequest('admin_dashboard/resumen_incidencias.php', 'GET');
+                if (!is_array($result) || !isset($result['data']) || !is_array($result['data'])) {
+                    throw new \RuntimeException('Formato de datos inesperado');
+                }
             } catch (\Exception $e) {
-                die("Error cargando dashboard: " . $e->getMessage());
+                view('error', ['message' => htmlspecialchars($e->getMessage())]);
+                return;
             }
 
-            $data = $result['data'] ?? [];
-
+            $d = $result['data'];
             view('dashboard', [
-                'pendientes'    => $data['Pendiente']     ?? 0,
-                'en_desarrollo' => $data['En Desarrollo'] ?? 0,
-                'terminadas'    => $data['Terminado']     ?? 0,
+                'pendientes'    => (int)($d['Pendiente']     ?? 0),
+                'en_desarrollo' => (int)($d['En Desarrollo'] ?? 0),
+                'terminadas'    => (int)($d['Terminado']     ?? 0),
             ]);
         }
     }
