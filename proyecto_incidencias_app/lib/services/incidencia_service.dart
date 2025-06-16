@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import '../config.dart';
@@ -16,7 +17,7 @@ class IncidenciaService {
     required int ciudadanoId,
     File? foto,
   }) async {
-    final url = Uri.parse('${BASE_URL}api_ciudadano/registrar_incidencia.php');
+    final url = Uri.parse('${baseUrl}api_ciudadano/registrar_incidencia.php');
 
     try {
       var request = http.MultipartRequest('POST', url);
@@ -55,7 +56,7 @@ class IncidenciaService {
 
   // Obtener lista de tipos de incidencia
   static Future<List<Map<String, dynamic>>> obtenerTiposIncidencia() async {
-    final url = Uri.parse('${BASE_URL}api_ciudadano/tipos_incidencia.php');
+    final url = Uri.parse('${baseUrl}api_ciudadano/tipos_incidencia.php');
 
     try {
       final response = await http.get(url);
@@ -76,7 +77,7 @@ class IncidenciaService {
 
   // Obtener todas las incidencias (para el historial del ciudadano)
   static Future<List<Map<String, dynamic>>> obtenerTodasLasIncidencias(int ciudadanoId) async {
-    final url = Uri.parse('${BASE_URL}api_ciudadano/listar_incidencias.php?ciudadano_id=$ciudadanoId');
+    final url = Uri.parse('${baseUrl}api_ciudadano/listar_incidencias.php?ciudadano_id=$ciudadanoId');
 
     try {
       final response = await http.get(url);
@@ -92,14 +93,14 @@ class IncidenciaService {
         return [];
       }
     } catch (e) {
-      print("Error al obtener todas las incidencias: $e");
+      debugPrint("Error al obtener todas las incidencias: $e");
       return [];
     }
   }
 
   // Validar o registrar ciudadano por número de celular
   static Future<Map<String, dynamic>?> validarTelefono(String celular) async {
-    final url = Uri.parse('${BASE_URL}api_ciudadano/validar_telefono.php');
+    final url = Uri.parse('${baseUrl}api_ciudadano/validar_telefono.php');
 
     try {
       final response = await http.post(
@@ -119,7 +120,7 @@ class IncidenciaService {
         return {'success': false, 'message': 'Error en la conexión al servidor'};
       }
     } catch (e) {
-      print("Error al validar teléfono: $e");
+      debugPrint("Error al validar teléfono: $e");
       return {'success': false, 'message': 'Excepción: $e'};
     }
   }

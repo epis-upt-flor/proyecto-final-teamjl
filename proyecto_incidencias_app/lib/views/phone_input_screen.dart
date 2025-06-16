@@ -4,7 +4,7 @@ import '../viewmodels/phone_input_viewmodel.dart';
 import 'ciudadano_home.dart';
 
 class PhoneInputScreen extends StatelessWidget {
-  const PhoneInputScreen({Key? key}) : super(key: key);
+  const PhoneInputScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +44,9 @@ class PhoneInputScreen extends StatelessWidget {
                           ? null
                           : () async {
                               final success = await viewModel.validarTelefono();
+
+                              if (!context.mounted) return;
+
                               if (success && viewModel.ciudadanoId != null) {
                                 Navigator.pushReplacement(
                                   context,

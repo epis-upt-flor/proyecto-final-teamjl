@@ -8,12 +8,12 @@ class DetalleIncidenciaScreen extends StatefulWidget {
   final int empleadoId;
   final String token;
 
-  const DetalleIncidenciaScreen({
-    Key? key,
-    required this.incidenciaId,
-    required this.empleadoId,
-    required this.token,
-  }) : super(key: key);
+const DetalleIncidenciaScreen({
+  super.key,
+  required this.incidenciaId,
+  required this.empleadoId,
+  required this.token,
+});
 
   @override
   State<DetalleIncidenciaScreen> createState() => _DetalleIncidenciaScreenState();
@@ -21,7 +21,6 @@ class DetalleIncidenciaScreen extends StatefulWidget {
 
 class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
   late DetalleIncidenciaViewModel _viewModel;
-  late GoogleMapController _mapController;
 
   @override
   void initState() {
@@ -105,7 +104,7 @@ class _DetalleIncidenciaScreenState extends State<DetalleIncidenciaScreen> {
                             zoom: 16,
                           ),
                           onMapCreated: (controller) {
-                            _mapController = controller;
+                            // _mapController eliminado porque no se utiliza
                           },
                           markers: {
                             Marker(

@@ -61,6 +61,9 @@ class LoginScreen extends StatelessWidget {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 bool success = await viewModel.login();
+
+                                if (!context.mounted) return;
+
                                 if (success && viewModel.usuario != null) {
                                   Navigator.pushReplacement(
                                     context,

@@ -4,7 +4,7 @@ import 'tareas_screen.dart';
 class EmpleadoScreen extends StatefulWidget {
   final Map<String, dynamic> user;
 
-  const EmpleadoScreen({Key? key, required this.user}) : super(key: key);
+  const EmpleadoScreen({super.key, required this.user});
 
   @override
   State<EmpleadoScreen> createState() => _EmpleadoScreenState();
@@ -20,9 +20,9 @@ class _EmpleadoScreenState extends State<EmpleadoScreen> {
     super.initState();
     _screens = [
       TareasScreen(user: widget.user),
-      Center(child: Text('Completadas')),
-      Center(child: Text('Notificaciones')),
-      Center(child: Text('Perfil')),
+      const Center(child: Text('Completadas')),
+      const Center(child: Text('Notificaciones')),
+      const Center(child: Text('Perfil')),
     ];
   }
 

@@ -5,7 +5,7 @@ import 'historial_screen.dart';
 class CiudadanoHome extends StatefulWidget {
   final Map<String, dynamic> user;
 
-  const CiudadanoHome({Key? key, required this.user}) : super(key: key);
+  const CiudadanoHome({super.key, required this.user});
 
   @override
   State<CiudadanoHome> createState() => _CiudadanoHomeState();
@@ -22,8 +22,7 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
 
   @override
   Widget build(BuildContext context) {
-    // Lista de pantallas con acceso al ID del ciudadano
-    final List<Widget> _screens = <Widget>[
+    final List<Widget> screens = <Widget>[
       ReportarScreen(ciudadanoId: widget.user['id_celular']),
       HistorialScreen(ciudadanoId: widget.user['id_celular']),
       const Center(child: Text('Notificaciones')),
@@ -31,7 +30,7 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
     ];
 
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: Colors.teal,

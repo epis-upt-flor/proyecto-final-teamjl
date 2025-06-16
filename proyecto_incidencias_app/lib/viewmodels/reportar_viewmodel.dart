@@ -27,6 +27,13 @@ class ReportarViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Seleccionar tipo por ID y notificar cambios
+  void seleccionarTipoPorId(int? id) {
+    if (id == null) return;
+    tipoSeleccionado = tipos.firstWhere((t) => t.id == id);
+    notifyListeners();
+  }
+
   // Seleccionar imagen
   Future<void> seleccionarImagen() async {
     final picker = ImagePicker();
@@ -52,7 +59,7 @@ class ReportarViewModel extends ChangeNotifier {
         zonaController.text = place.subAdministrativeArea ?? "Zona no disponible";
       }
     } catch (e) {
-      // Log opcional
+      // .
     }
     notifyListeners();
   }

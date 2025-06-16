@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../config.dart';
 
 class IncidenciasEmpleadoService {
   // Obtener incidencias asignadas a un empleado
   static Future<List<Map<String, dynamic>>> obtenerIncidenciasAsignadas(int empleadoId, {String? token}) async {
-    final url = Uri.parse('${BASE_URL}api_empleados/incidencias_asignadas.php?empleado_id=$empleadoId');
+    final url = Uri.parse('${baseUrl}api_empleados/incidencias_asignadas.php?empleado_id=$empleadoId');
 
     try {
       final response = await http.get(
@@ -30,22 +30,22 @@ class IncidenciasEmpleadoService {
           }
           return incidencias;
         } else {
-          print("Error en los datos recibidos: ${responseData['message']}");
+          debugPrint("Error en los datos recibidos: ${responseData['message']}");
           return [];
         }
       } else {
-        print("Error HTTP ${response.statusCode}");
+        debugPrint("Error HTTP ${response.statusCode}");
         return [];
       }
     } catch (e) {
-      print("Error al obtener incidencias: $e");
+      debugPrint("Error al obtener incidencias: $e");
       return [];
     }
   }
 
   // Actualizar el estado de una incidencia
   static Future<bool> actualizarEstado(int incidenciaId, int nuevoEstadoId, {String? token}) async {
-    final url = Uri.parse('${BASE_URL}api_empleados/actualizar_estado.php');
+    final url = Uri.parse('${baseUrl}api_empleados/actualizar_estado.php');
 
     try {
       final response = await http.post(
@@ -64,18 +64,18 @@ class IncidenciasEmpleadoService {
         final responseData = jsonDecode(response.body);
         return responseData['success'] == true;
       } else {
-        print("Error HTTP al actualizar estado: ${response.statusCode}");
+        debugPrint("Error HTTP al actualizar estado: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error al actualizar estado: $e");
+      debugPrint("Error al actualizar estado: $e");
       return false;
     }
   }
 
   // Obtener detalles de una incidencia específica
   static Future<Map<String, dynamic>?> obtenerIncidenciaPorId(int empleadoId, int incidenciaId, {String? token}) async {
-    final url = Uri.parse('${BASE_URL}api_empleados/incidencias_asignadas.php?empleado_id=$empleadoId');
+    final url = Uri.parse('${baseUrl}api_empleados/incidencias_asignadas.php?empleado_id=$empleadoId');
 
     try {
       final response = await http.get(
@@ -99,15 +99,15 @@ class IncidenciasEmpleadoService {
           }
           return incidencia;
         } else {
-          print("Error en los datos: ${responseData['message']}");
+          debugPrint("Error en los datos: ${responseData['message']}");
           return null;
         }
       } else {
-        print("Error HTTP al obtener incidencia: ${response.statusCode}");
+        debugPrint("Error HTTP al obtener incidencia: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Excepción al obtener detalle de incidencia: $e");
+      debugPrint("Excepción al obtener detalle de incidencia: $e");
       return null;
     }
   }

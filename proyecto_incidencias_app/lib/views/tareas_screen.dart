@@ -6,7 +6,7 @@ import 'detalle_incidencia_screen.dart';
 class TareasScreen extends StatefulWidget {
   final Map<String, dynamic> user;
 
-  const TareasScreen({Key? key, required this.user}) : super(key: key);
+  const TareasScreen({super.key, required this.user});
 
   @override
   State<TareasScreen> createState() => _TareasScreenState();
@@ -57,7 +57,13 @@ class _TareasScreenState extends State<TareasScreen> {
   }
 
   Widget _buildTareaCard(Incidencia incidencia) {
-    final estadoNombre = incidencia.estado ?? 'Desconocido';
+    final estadoNombre = incidencia.estado;
+
+    final descripcion = incidencia.descripcion.isNotEmpty
+        ? incidencia.descripcion
+        : 'Sin descripción';
+
+    final direccion = incidencia.direccion ?? '';
     final esPendiente = estadoNombre == 'Pendiente';
 
     return Card(
@@ -66,12 +72,12 @@ class _TareasScreenState extends State<TareasScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         leading: const Icon(Icons.assignment_outlined, color: Colors.teal),
-        title: Text(incidencia.descripcion ?? 'Sin descripción'),
+        title: Text(descripcion),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (incidencia.direccion != null)
-              Text("Dirección: ${incidencia.direccion}"),
+            if (direccion.isNotEmpty)
+              Text("Dirección: $direccion"),
             Text("Estado actual: $estadoNombre"),
           ],
         ),
@@ -81,7 +87,7 @@ class _TareasScreenState extends State<TareasScreen> {
                 tooltip: 'Marcar como Completado',
                 onPressed: () {
                   _viewModel.actualizarEstado(
-                    incidenciaId: incidencia.id!,
+                    incidenciaId: incidencia.id,
                     nuevoEstadoId: 3,
                     token: widget.user['token'],
                     onSuccess: () {
@@ -103,7 +109,7 @@ class _TareasScreenState extends State<TareasScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => DetalleIncidenciaScreen(
-                incidenciaId: incidencia.id!,
+                incidenciaId: incidencia.id,
                 empleadoId: widget.user['id'],
                 token: widget.user['token'],
               ),

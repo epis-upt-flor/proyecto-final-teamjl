@@ -7,7 +7,7 @@ import '../viewmodels/reportar_viewmodel.dart';
 class ReportarScreen extends StatelessWidget {
   final int ciudadanoId;
 
-  const ReportarScreen({Key? key, required this.ciudadanoId}) : super(key: key);
+  const ReportarScreen({super.key, required this.ciudadanoId});
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +61,7 @@ class ReportarScreen extends StatelessWidget {
                               ))
                           .toList(),
                       onChanged: (id) {
-                        viewModel.tipoSeleccionado =
-                            viewModel.tipos.firstWhere((t) => t.id == id);
-                        viewModel.notifyListeners();
+                        viewModel.seleccionarTipoPorId(id);
                       },
                     ),
                   const SizedBox(height: 16),
@@ -117,8 +115,10 @@ class ReportarScreen extends StatelessWidget {
                       onPressed: viewModel.isLoading
                           ? null
                           : () async {
-                              final response =
-                                  await viewModel.enviarReporte(ciudadanoId);
+                              final response = await viewModel.enviarReporte(ciudadanoId);
+
+                              if (!context.mounted) return;
+
                               if (response['success'] == true) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Incidencia enviada')),

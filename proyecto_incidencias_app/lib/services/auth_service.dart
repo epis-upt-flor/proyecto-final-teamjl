@@ -1,14 +1,15 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import '../config.dart';
 
 class AuthService {
   // Método para iniciar sesión (empleados)
   static Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('${BASE_URL}api_empleados/login.php');
+    final url = Uri.parse('${baseUrl}api_empleados/login.php');
 
     try {
-      print('Intentando iniciar sesión con: $email');
+      developer.log('Intentando iniciar sesión con: $email', name: 'AuthService');
 
       final response = await http.post(
         url,
@@ -16,7 +17,7 @@ class AuthService {
         body: jsonEncode({'email': email, 'password': password}),
       );
 
-      print('Respuesta: ${response.body}');
+      developer.log('Respuesta: ${response.body}', name: 'AuthService');
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -31,10 +32,10 @@ class AuthService {
 
   // Método para registrar un nuevo empleado
   static Future<Map<String, dynamic>> register(String dni, String name, String surname, String email, String password) async {
-    final url = Uri.parse('${BASE_URL}api_empleados/registrar.php');
+    final url = Uri.parse('${baseUrl}api_empleados/registrar.php');
 
     try {
-      print('Intentando registrar a: $dni $name $surname');
+      developer.log('Intentando registrar a: $dni $name $surname', name: 'AuthService');
 
       final response = await http.post(
         url,
@@ -48,7 +49,7 @@ class AuthService {
         }),
       );
 
-      print('Respuesta: ${response.body}');
+      developer.log('Respuesta: ${response.body}', name: 'AuthService');
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);

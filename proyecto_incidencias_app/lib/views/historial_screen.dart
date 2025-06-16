@@ -6,7 +6,7 @@ import '../models/incidencia_model.dart';
 class HistorialScreen extends StatelessWidget {
   final int ciudadanoId;
 
-  const HistorialScreen({Key? key, required this.ciudadanoId}) : super(key: key);
+  const HistorialScreen({super.key, required this.ciudadanoId});
 
   @override
   Widget build(BuildContext context) {
