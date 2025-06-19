@@ -1,7 +1,8 @@
 parameters:
   level: max            
   paths:
-    - admin/controllers/AuthController.php
+    - admin/
+    - api/
     - phpstan-stubs.php
 
   excludePaths:
@@ -9,4 +10,3 @@ parameters:
     - admin/reporte/fpdf/tutorial/* 
     - admin/reporte/generar_excel.php
     - admin/reporte/generar_pdf.php
-    - api/src/

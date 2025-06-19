@@ -1,42 +1,42 @@
 <?php
-
+    declare(strict_types=1);
     class IncidenciasController
     {
         public function index(): void
         {
             $errorInc = null;
             try {
+                /** @var array<string,mixed> $incResp */
                 $incResp = apiRequest('admin_dashboard/incidencias.php', 'GET');
-                if (!is_array($incResp) || !isset($incResp['data']) || !is_array($incResp['data'])) {
+                if (! isset($incResp['data']) || ! is_array($incResp['data'])) {
                     throw new \RuntimeException('Incidencias inválidas');
                 }
+                /** @var array<int,array<string,mixed>> $incidencias */
                 $incidencias = $incResp['data'];
 
+                /** @var array<string,mixed> $empResp */
                 $empResp = apiRequest('admin_dashboard/empleados.php', 'GET');
-                if (!is_array($empResp) || !isset($empResp['data']) || !is_array($empResp['data'])) {
+                if (! isset($empResp['data']) || ! is_array($empResp['data'])) {
                     throw new \RuntimeException('Empleados inválidos');
                 }
+                /** @var array<int,array<string,mixed>> $empleados */
                 $empleados = $empResp['data'];
 
+                /** @var array<string,mixed> $prioResp */
                 $prioResp = apiRequest('admin_dashboard/prioridad.php', 'GET');
-                if (!is_array($prioResp) || !isset($prioResp['data']) || !is_array($prioResp['data'])) {
+                if (! isset($prioResp['data']) || ! is_array($prioResp['data'])) {
                     throw new \RuntimeException('Prioridades inválidas');
                 }
+                /** @var array<int,array<string,mixed>> $prioridades */
                 $prioridades = $prioResp['data'];
             } catch (\Exception $e) {
                 error_log('Error cargando Incidencias: ' . $e->getMessage());
                 $incidencias = [];
                 $empleados   = [];
                 $prioridades = [];
-                $errorInc    = htmlspecialchars($e->getMessage());
+                $errorInc    = htmlspecialchars($e->getMessage(), ENT_QUOTES);
             }
-
-            view('incidencias', [
-                'incidencias' => $incidencias,
-                'empleados'   => $empleados,
-                'prioridades' => $prioridades,
-                'errorInc'    => $errorInc,
-            ]);
+            view('incidencias', compact('incidencias','empleados','prioridades','errorInc'));
         }
     }
 ?>
