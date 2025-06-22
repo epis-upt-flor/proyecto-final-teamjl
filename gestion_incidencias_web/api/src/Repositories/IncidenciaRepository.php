@@ -39,6 +39,19 @@
             $pdo = Database::getInstance();
             $pdo->beginTransaction();
 
+            $sqlCheck = "
+                SELECT asignado_a
+                FROM incidencia
+                WHERE id = :incidencia_id
+            ";
+            $stmtCheck = $pdo->prepare($sqlCheck);
+            $stmtCheck->execute(['incidencia_id' => $incidenciaId]);
+            $result = $stmtCheck->fetch();
+
+            if ($result && (int)$result['asignado_a'] === $empleadoId) {
+                throw new \Exception("Esta incidencia ya fue asignada a este empleado.");
+            }
+            
             try {
                 $sql1 = "
                     UPDATE incidencia
