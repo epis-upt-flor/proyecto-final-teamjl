@@ -11,14 +11,14 @@
             $pdo = Database::getInstance();
 
             // Verificar si ya existe
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM calendario_incidencia WHERE id_incidencia = :id");
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM calendario_incidencia WHERE incidencia_id = :id");
             $stmt->execute(['id' => $incidenciaId]);
             $existe = $stmt->fetchColumn() > 0;
 
             if ($existe) {
-                $sql = "UPDATE calendario_incidencia SET fecha_programada = :fecha WHERE id_incidencia = :id";
+                $sql = "UPDATE calendario_incidencia SET fecha_programada = :fecha WHERE incidencia_id = :id";
             } else {
-                $sql = "INSERT INTO calendario_incidencia (id_incidencia, fecha_programada) VALUES (:id, :fecha)";
+                $sql = "INSERT INTO calendario_incidencia (incidencia_id, fecha_programada) VALUES (:id, :fecha)";
             }
 
             $stmt = $pdo->prepare($sql);

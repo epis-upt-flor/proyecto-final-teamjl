@@ -20,11 +20,13 @@
                     i.descripcion,
                     i.latitud,
                     i.longitud,
-                    TO_CHAR(i.fecha_reporte,'YYYY-MM-DD') AS fecha_reporte
+                    TO_CHAR(i.fecha_reporte,'YYYY-MM-DD') AS fecha_reporte,
+                    TO_CHAR(c.fecha_programada, 'YYYY-MM-DD') AS fecha_programada
                 FROM incidencia i
                 JOIN tipo_incidencia    ti ON i.tipo_id      = ti.id
                 JOIN estado_incidencia  ei ON i.estado_id    = ei.id
                 LEFT JOIN prioridad     pr ON i.prioridad_id = pr.id
+                LEFT JOIN calendario_incidencia c ON i.id = c.incidencia_id
                 ORDER BY i.fecha_reporte ASC
             ";
 
@@ -32,21 +34,48 @@
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId): bool
+        public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId, ?string $fechaProgramada = null): bool
         {
             $pdo = Database::getInstance();
-            $sql = "
-            UPDATE incidencia
-                SET asignado_a   = :empleado_id,
-                    prioridad_id = :prioridad_id
-            WHERE id = :incidencia_id
-            ";
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([
-                'empleado_id'    => $empleadoId,
-                'prioridad_id'   => $prioridadId,
-                'incidencia_id'  => $incidenciaId
-            ]);
+            $pdo->beginTransaction();
+
+            try {
+                $sql1 = "
+                    UPDATE incidencia
+                    SET asignado_a = :empleado_id,
+                        prioridad_id = :prioridad_id
+                    WHERE id = :incidencia_id
+                ";
+                $stmt1 = $pdo->prepare($sql1);
+                $stmt1->execute([
+                    'empleado_id'    => $empleadoId,
+                    'prioridad_id'   => $prioridadId,
+                    'incidencia_id'  => $incidenciaId
+                ]);
+
+                if ($fechaProgramada) {
+                    $sql2 = "
+                        INSERT INTO calendario_incidencia (incidencia_id, fecha_programada)
+                        VALUES (:incidencia_id, :fecha_programada)
+                        ON CONFLICT (incidencia_id) DO UPDATE SET fecha_programada = EXCLUDED.fecha_programada
+                    ";
+                    $stmt2 = $pdo->prepare($sql2);
+                    $stmt2->execute([
+                        'incidencia_id'     => $incidenciaId,
+                        'fecha_programada'  => $fechaProgramada
+                    ]);
+                }
+
+                $pdo->commit();
+                return true;
+
+            } catch (\Exception $e) {
+                $pdo->rollBack();
+                die(json_encode([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ]));
+            }
         }
 
         public static function obtenerPorEmpleado(int $empleadoId): array
@@ -63,11 +92,13 @@
                     i.descripcion,
                     i.latitud,
                     i.longitud,
-                    TO_CHAR(i.fecha_reporte, 'YYYY-MM-DD') AS fecha_reporte
+                    TO_CHAR(i.fecha_reporte, 'YYYY-MM-DD') AS fecha_reporte,
+                    TO_CHAR(c.fecha_programada, 'YYYY-MM-DD') AS fecha_programada
                 FROM incidencia i
                 INNER JOIN tipo_incidencia   ti ON i.tipo_id   = ti.id
                 INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
                 LEFT JOIN prioridad          pr ON i.prioridad_id = pr.id
+                LEFT JOIN calendario_incidencia c ON i.id = c.incidencia_id
                 WHERE i.asignado_a = :empleado_id
                 ORDER BY i.fecha_reporte ASC
             ";
@@ -139,5 +170,4 @@
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
-
 ?>

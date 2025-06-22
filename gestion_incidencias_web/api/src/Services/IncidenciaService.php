@@ -1,5 +1,4 @@
 <?php
-
     namespace App\Services;
 
     use App\Repositories\IncidenciaRepository;
@@ -11,9 +10,9 @@
             return IncidenciaRepository::obtenerTodas();
         }
 
-        public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId): bool
+        public static function asignarEmpleado(int $incidenciaId, int $empleadoId, int $prioridadId, ?string $fechaProgramada = null): bool
         {
-            return IncidenciaRepository::asignarEmpleado($incidenciaId, $empleadoId, $prioridadId);
+            return IncidenciaRepository::asignarEmpleado($incidenciaId, $empleadoId, $prioridadId, $fechaProgramada);
         }
 
         public static function obtenerPorEmpleado(int $empleadoId): array
@@ -36,5 +35,4 @@
             return IncidenciaRepository::registrarCiudadano($celular);
         }
     }
-
 ?>

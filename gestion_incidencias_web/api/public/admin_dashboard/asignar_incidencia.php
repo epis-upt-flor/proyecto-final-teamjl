@@ -1,4 +1,8 @@
 <?php
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
     require_once __DIR__ . '/../../bootstrap.php';
 
     use App\Core\Auth;
@@ -32,5 +36,17 @@
         Response::error("Faltan datos", 422);
     }
 
+    if (!empty($data['fecha_programada'])) {
+        $fecha = $data['fecha_programada'];
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            Response::error("Formato de fecha inválido. Use YYYY-MM-DD", 422);
+        }
+
+        $hoy = date('Y-m-d');
+        if ($fecha < $hoy) {
+            Response::error("La fecha programada no puede ser anterior a hoy", 422);
+        }
+    }
     IncidenciaController::asignarEmpleado($data);
 ?>

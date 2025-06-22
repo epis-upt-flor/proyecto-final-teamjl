@@ -1,5 +1,4 @@
 <?php
-
     namespace App\Controllers;
 
     use App\Services\IncidenciaService;
@@ -42,10 +41,13 @@
                 Response::error("Datos incompletos para la asignación", 422);
             }
 
+            $fecha_programada = $data['fecha_programada'] ?? null;
+
             $ok = IncidenciaService::asignarEmpleado(
                 (int)$data['incidencia_id'],
                 (int)$data['empleado_id'],
-                (int)$data['prioridad_id']
+                (int)$data['prioridad_id'],
+                $fecha_programada
             );
 
             if ($ok) {
