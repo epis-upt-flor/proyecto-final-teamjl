@@ -19,14 +19,15 @@
         <th>Prioridad</th>
         <th>Descripción</th>
         <th>Ubicación</th>
-        <th>Fecha</th>
+        <th>Fecha del reporte</th>
         <th>Asignar a</th>
+        <th>Fecha Programada</th> <!-- NUEVO -->
       </tr>
     </thead>
     <tbody>
       <?php if (empty($incidencias)): ?>
         <tr>
-          <td colspan="8" class="text-center text-muted">No hay incidencias reportadas.</td>
+          <td colspan="9" class="text-center text-muted">No hay incidencias reportadas.</td>
         </tr>
       <?php else: ?>
         <?php foreach ($incidencias as $inc): ?>
@@ -79,6 +80,25 @@
                 <span class="text-muted">—</span>
               <?php endif; ?>
             </td>
+
+            <!-- NUEVA COLUMNA DE FECHA PROGRAMADA -->
+            <td>
+              <?php if ($inc['estado'] === 'Pendiente' || $inc['estado'] === 'En Desarrollo'): ?>
+                <div class="d-flex flex-column">
+                  <input type="date"
+                         id="fecha-<?= $inc['id'] ?>"
+                         class="form-control form-control-sm mb-2"
+                         min="<?= date('Y-m-d') ?>"
+                         value="<?= $inc['fecha_programada'] ?? '' ?>">
+                  <button class="btn btn-sm btn-outline-info"
+                          onclick="programarFecha(<?= $inc['id'] ?>)">
+                    📅 Programar
+                  </button>
+                </div>
+              <?php else: ?>
+                <?= $inc['fecha_programada'] ?? '<span class="text-muted">—</span>' ?>
+              <?php endif; ?>
+            </td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>
@@ -88,7 +108,7 @@
 
 <script>
   const API_BASE = '<?= API_BASE ?>';
-  const API_TOKEN = '<?= $_SESSION['user_token'] ?? '' ?>';  // <— aquí
+  const API_TOKEN = '<?= $_SESSION['user_token'] ?? '' ?>';
 
   function assignIncidencia(id) {
     const selEmp  = document.getElementById(`select-emp-${id}`);
@@ -118,5 +138,39 @@
       }
     })
     .catch(() => alert('❌ No se pudo conectar.'));
+  }
+
+  function programarFecha(id) {
+    const fechaInput = document.getElementById('fecha-' + id);
+    const fecha = fechaInput.value;
+
+    if (!fecha) {
+      alert("Por favor seleccione una fecha válida.");
+      return;
+    }
+
+    fetch(`${API_BASE}admin_dashboard/programar_fecha.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + API_TOKEN
+      },
+      body: JSON.stringify({
+        incidencia_id: id,
+        fecha: fecha
+      })
+    })
+    .then(r => r.json())
+    .then(json => {
+      if (json.success) {
+        alert("✅ " + json.message);
+        window.location.reload();
+      } else {
+        alert("❌ " + (json.message || "No se pudo programar la fecha."));
+      }
+    })
+    .catch(() => {
+      alert("❌ Error de conexión con el servidor.");
+    });
   }
 </script>

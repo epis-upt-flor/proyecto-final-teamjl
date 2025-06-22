@@ -76,6 +76,25 @@
                 Response::error("Error al obtener incidencias: " . $e->getMessage(), 500);
             }
         }
-    }
 
+        public static function programarFecha(): void
+        {
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            if (empty($data['incidencia_id']) || empty($data['fecha'])) {
+                \App\Core\Response::error("Datos incompletos", 400);
+            }
+
+            $id = (int)$data['incidencia_id'];
+            $fecha = $data['fecha'];
+
+            $ok = \App\Services\CalendarioService::programar($id, $fecha);
+
+            if (!$ok) {
+                \App\Core\Response::error("La fecha no puede ser anterior a hoy", 422);
+            }
+
+            \App\Core\Response::success([], "Fecha programada correctamente");
+        }
+    }
 ?>
