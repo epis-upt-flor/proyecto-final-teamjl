@@ -9,7 +9,6 @@
   <div class="alert alert-warning"><?= htmlspecialchars($errorEmp) ?></div>
 <?php endif; ?>
 
-<!-- Filtros -->
 <div class="row mb-3">
   <div class="col-md-4">
     <input type="text" id="busqueda" class="form-control" placeholder="Buscar por descripción, estado, tipo...">
@@ -95,11 +94,15 @@
                     <select class="form-select form-select-sm"
                             id="select-emp-<?= $inc['id'] ?>">
                       <option value="">Empleado…</option>
-                      <?php foreach ($empleados as $emp): ?>
-                        <option value="<?= htmlspecialchars($emp['id']) ?>">
-                          <?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellido']) ?>
-                        </option>
-                      <?php endforeach; ?>
+                        <?php foreach ($empleados as $emp): ?>
+                          <?php if (
+                            isset($inc['empleado_id']) &&
+                            $inc['empleado_id'] == $emp['id']
+                          ) continue; ?>
+                          <option value="<?= htmlspecialchars($emp['id']) ?>">
+                            <?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellido']) ?>
+                          </option>
+                        <?php endforeach; ?>
                     </select>
                   </div>
                   <div class="d-flex">
@@ -167,7 +170,6 @@
     .catch(() => alert('❌ No se pudo conectar.'));
   }
 
-  // Filtro en tiempo real
   document.addEventListener('DOMContentLoaded', () => {
     const inputBusqueda = document.getElementById('busqueda');
     const filtroPrioridad = document.getElementById('filtro-prioridad');

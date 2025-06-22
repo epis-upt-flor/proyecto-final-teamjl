@@ -56,5 +56,26 @@
                 'token'    => $token
             ];
         }
+
+        public static function yaAsignado(int $incidenciaId, int $empleadoId): bool
+        {
+            try {
+                $pdo = \App\Core\Database::getInstance();
+                $stmt = $pdo->prepare('
+                    SELECT COUNT(*) 
+                    FROM asignaciones 
+                    WHERE incidencia_id = :incidencia 
+                    AND empleado_id = :empleado
+                ');
+                $stmt->execute([
+                    'incidencia' => $incidenciaId,
+                    'empleado'   => $empleadoId
+                ]);
+                return $stmt->fetchColumn() > 0;
+            } catch (\PDOException $e) {
+                error_log('Error en yaAsignado: ' . $e->getMessage());
+                return false;
+            }
+        }
     }
 ?>

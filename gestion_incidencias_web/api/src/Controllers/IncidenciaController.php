@@ -43,12 +43,17 @@
 
             $fecha_programada = $data['fecha_programada'] ?? null;
 
-            $ok = IncidenciaService::asignarEmpleado(
-                (int)$data['incidencia_id'],
-                (int)$data['empleado_id'],
-                (int)$data['prioridad_id'],
-                $fecha_programada
-            );
+            try {
+                $ok = IncidenciaService::asignarEmpleado(
+                    (int)$data['incidencia_id'],
+                    (int)$data['empleado_id'],
+                    (int)$data['prioridad_id'],
+                    $fecha_programada
+                );
+            } catch (\Throwable $e) {
+                error_log('[asignarEmpleado] ' . $e->getMessage());
+                Response::error("Error interno al asignar la incidencia", 500);
+            }
 
             if ($ok) {
                 Response::success([], "Incidencia asignada y priorizada");

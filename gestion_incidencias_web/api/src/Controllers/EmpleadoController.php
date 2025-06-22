@@ -115,5 +115,15 @@
                 Response::error("Error al obtener empleados: " . $e->getMessage(), 500);
             }
         }
+
+        public static function validarAsignacionUnica(array $data): void
+        {
+            $empleadoId   = (int) $data['empleado_id'];
+            $incidenciaId = (int) $data['incidencia_id'];
+
+            if (\App\Services\EmpleadoService::yaAsignado($empleadoId, $incidenciaId)) {
+                \App\Core\Response::error("La incidencia ya está asignada a este empleado", 409);
+            }
+        }
     }
 ?>

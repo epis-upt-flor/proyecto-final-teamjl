@@ -48,5 +48,12 @@
             Response::error("La fecha programada no puede ser anterior a hoy", 422);
         }
     }
-    IncidenciaController::asignarEmpleado($data);
+
+    \App\Controllers\EmpleadoController::validarAsignacionUnica($data);
+
+    try {
+        IncidenciaController::asignarEmpleado($data);
+    } catch (\Throwable $e) {
+        Response::error("Error interno: " . $e->getMessage(), 500);
+    }
 ?>
