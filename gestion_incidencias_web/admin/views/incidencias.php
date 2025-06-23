@@ -140,3 +140,97 @@
     </tbody>
   </table>
 </div>
+
+<script>
+  const API_BASE = '<?= API_BASE ?>';
+  const API_TOKEN = '<?= $_SESSION['user_token'] ?? '' ?>';
+
+  function assignIncidencia(id) {
+    const selEmp  = document.getElementById(`select-emp-${id}`);
+    const selPrio = document.getElementById(`select-prio-${id}`);
+    const fechaEl = document.getElementById(`fecha-${id}`);
+
+    const empleado_id     = parseInt(selEmp.value, 10);
+    const prioridad_id    = parseInt(selPrio.value, 10);
+    const fecha_programada = fechaEl.value;
+
+    if (!empleado_id || !prioridad_id || !fecha_programada) {
+      return alert('Seleccione empleado, prioridad y fecha.');
+    }
+
+    fetch(`${API_BASE}admin_dashboard/asignar_incidencia.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + API_TOKEN
+      },
+      body: JSON.stringify({ 
+        incidencia_id: id,
+        empleado_id,
+        prioridad_id,
+        fecha_programada
+      })
+    })
+    .then(r => r.json())
+    .then(json => {
+      if (json.success) {
+        alert('✅ Incidencia asignada con fecha.');
+        window.location.reload();
+      } else {
+        alert('❌ ' + (json.message||'Error al asignar'));
+      }
+    })
+    .catch(() => alert('❌ No se pudo conectar.'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputBusqueda = document.getElementById('busqueda');
+    const filtroPrioridad = document.getElementById('filtro-prioridad');
+    const filtroEmpleado = document.getElementById('filtro-empleado');
+    const fechaDesde = document.getElementById('fecha-desde');
+    const fechaHasta = document.getElementById('fecha-hasta');
+
+    [inputBusqueda, filtroPrioridad, filtroEmpleado, fechaDesde, fechaHasta].forEach(el =>
+      el.addEventListener('input', filtrarTabla)
+    );
+
+    function filtrarTabla() {
+      const texto = inputBusqueda.value.toLowerCase();
+      const prioridad = filtroPrioridad.value.toLowerCase();
+      const empleado = filtroEmpleado.value.toLowerCase();
+      const desde = fechaDesde.value;
+      const hasta = fechaHasta.value;
+
+      const filas = document.querySelectorAll('table tbody tr');
+
+      filas.forEach(fila => {
+        const celdas = fila.querySelectorAll('td');
+        const descripcion = celdas[4]?.textContent.toLowerCase();
+        const estado = celdas[2]?.textContent.toLowerCase();
+        const tipo = celdas[1]?.textContent.toLowerCase();
+        const prio = celdas[3]?.textContent.toLowerCase();
+        const fecha = celdas[6]?.textContent.trim();
+        const empTexto = fila.querySelector('select[id^=select-emp-] option:checked')?.textContent.toLowerCase() || '';
+
+        let visible = true;
+
+        if (texto && !descripcion.includes(texto) && !estado.includes(texto) && !tipo.includes(texto)) {
+          visible = false;
+        }
+
+        if (prioridad && !prio.includes(prioridad)) {
+          visible = false;
+        }
+
+        if (empleado && !empTexto.includes(empleado)) {
+          visible = false;
+        }
+
+        if (desde && fecha < desde) visible = false;
+        if (hasta && fecha > hasta) visible = false;
+
+        fila.style.display = visible ? '' : 'none';
+      });
+    }
+  });
+</script>
