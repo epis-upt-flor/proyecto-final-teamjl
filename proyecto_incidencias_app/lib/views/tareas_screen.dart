@@ -24,86 +24,122 @@ class _TareasScreenState extends State<TareasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tareas Asignadas'),
-        backgroundColor: Colors.teal,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-      body: AnimatedBuilder(
-        animation: _viewModel,
-        builder: (context, _) {
-          if (_viewModel.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Tareas Asignadas'),
+          backgroundColor: Colors.teal.shade700,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: SafeArea(
+          child: AnimatedBuilder(
+            animation: _viewModel,
+            builder: (context, _) {
+              if (_viewModel.isLoading) {
+                return const Center(child: CircularProgressIndicator(color: Colors.tealAccent));
+              }
 
-          if (_viewModel.errorMessage != null) {
-            return Center(child: Text(_viewModel.errorMessage!));
-          }
+              if (_viewModel.errorMessage != null) {
+                return Center(
+                  child: Text(
+                    _viewModel.errorMessage!,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                );
+              }
 
-          if (_viewModel.incidencias.isEmpty) {
-            return const Center(child: Text('No tienes incidencias asignadas.'));
-          }
+              if (_viewModel.incidencias.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No tienes incidencias asignadas.',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                );
+              }
 
-          return ListView.builder(
-            itemCount: _viewModel.incidencias.length,
-            itemBuilder: (context, index) {
-              final incidencia = _viewModel.incidencias[index];
-              return _buildTareaCard(incidencia);
+              return ListView.builder(
+                itemCount: _viewModel.incidencias.length,
+                padding: const EdgeInsets.all(12),
+                itemBuilder: (context, index) {
+                  final incidencia = _viewModel.incidencias[index];
+                  return _buildTareaCard(incidencia);
+                },
+              );
             },
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildTareaCard(Incidencia incidencia) {
     final estadoNombre = incidencia.estado;
-
     final descripcion = incidencia.descripcion.isNotEmpty
         ? incidencia.descripcion
         : 'Sin descripción';
-
     final direccion = incidencia.direccion ?? '';
-    final esPendiente = estadoNombre == 'Pendiente';
+    final estadoActualId = _estadoIdDesdeTexto(estadoNombre);
 
     return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      color: Colors.white10,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: const Icon(Icons.assignment_outlined, color: Colors.teal),
-        title: Text(descripcion),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        leading: const Icon(Icons.assignment_outlined, color: Colors.tealAccent),
+        title: Text(
+          descripcion,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (direccion.isNotEmpty)
-              Text("Dirección: $direccion"),
-            Text("Estado actual: $estadoNombre"),
+              Text("Dirección: $direccion", style: const TextStyle(color: Colors.white70)),
+            Text("Estado actual: $estadoNombre", style: const TextStyle(color: Colors.white70)),
           ],
         ),
-        trailing: esPendiente
-            ? IconButton(
-                icon: const Icon(Icons.check_circle_outline, color: Colors.green),
-                tooltip: 'Marcar como Completado',
-                onPressed: () {
-                  _viewModel.actualizarEstado(
-                    incidenciaId: incidencia.id,
-                    nuevoEstadoId: 3,
-                    token: widget.user['token'],
-                    onSuccess: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Estado actualizado')),
-                      );
-                    },
-                    onError: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Error al actualizar estado')),
-                      );
-                    },
+        trailing: DropdownButton<int>(
+          dropdownColor: Colors.grey[900],
+          value: estadoActualId,
+          iconEnabledColor: Colors.tealAccent,
+          style: const TextStyle(color: Colors.white),
+          underline: Container(height: 0),
+          items: const [
+            DropdownMenuItem(value: 1, child: Text('Pendiente')),
+            DropdownMenuItem(value: 2, child: Text('En Desarrollo')),
+            DropdownMenuItem(value: 3, child: Text('Terminado')),
+          ],
+          onChanged: (nuevoEstadoId) {
+            if (nuevoEstadoId != null && nuevoEstadoId != estadoActualId) {
+              _viewModel.actualizarEstado(
+                incidenciaId: incidencia.id,
+                nuevoEstadoId: nuevoEstadoId,
+                token: widget.user['token'],
+                onSuccess: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Estado actualizado')),
                   );
                 },
-              )
-            : const Icon(Icons.check_circle, color: Colors.grey),
+                onError: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Error al actualizar estado')),
+                  );
+                },
+              );
+            }
+          },
+        ),
         onTap: () {
           Navigator.push(
             context,
@@ -118,5 +154,18 @@ class _TareasScreenState extends State<TareasScreen> {
         },
       ),
     );
+  }
+
+  int _estadoIdDesdeTexto(String estado) {
+    switch (estado) {
+      case 'Pendiente':
+        return 1;
+      case 'En Desarrollo':
+        return 2;
+      case 'Terminado':
+        return 3;
+      default:
+        return 1;
+    }
   }
 }

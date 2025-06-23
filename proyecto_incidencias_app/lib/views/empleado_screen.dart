@@ -20,9 +20,9 @@ class _EmpleadoScreenState extends State<EmpleadoScreen> {
     super.initState();
     _screens = [
       TareasScreen(user: widget.user),
-      const Center(child: Text('Completadas')),
-      const Center(child: Text('Notificaciones')),
-      const Center(child: Text('Perfil')),
+      const Center(child: Text('Completadas', style: TextStyle(color: Colors.white))),
+      const Center(child: Text('Notificaciones', style: TextStyle(color: Colors.white))),
+      const Center(child: Text('Perfil', style: TextStyle(color: Colors.white))),
     ];
   }
 
@@ -34,34 +34,50 @@ class _EmpleadoScreenState extends State<EmpleadoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Tareas',
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(child: _screens[_selectedIndex]),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF1F1F3C),
+            border: Border(top: BorderSide(color: Colors.white12, width: 0.5)),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.check_circle),
-            label: 'Completadas',
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            selectedItemColor: Colors.tealAccent.shade400,
+            unselectedItemColor: Colors.white60,
+            showUnselectedLabels: true,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.assignment),
+                label: 'Tareas',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.check_circle),
+                label: 'Completadas',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications_none),
+                label: 'Notificaciones',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                label: 'Perfil',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            label: 'Notificaciones',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Perfil',
-          ),
-        ],
+        ),
       ),
     );
   }

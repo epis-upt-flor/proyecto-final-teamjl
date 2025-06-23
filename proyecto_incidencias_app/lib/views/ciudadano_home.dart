@@ -25,38 +25,59 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
     final List<Widget> screens = <Widget>[
       ReportarScreen(ciudadanoId: widget.user['id_celular']),
       HistorialScreen(ciudadanoId: widget.user['id_celular']),
-      const Center(child: Text('Notificaciones')),
-      const Center(child: Text('Perfil')),
+      const Center(
+        child: Text(
+          'Notificaciones',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      const Center(
+        child: Text(
+          'Perfil',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
     ];
 
-    return Scaffold(
-      body: screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_location_alt_outlined),
-            label: 'Reportar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Historial',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            label: 'Notificaciones',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Perfil',
-          ),
-        ],
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(child: screens[_selectedIndex]),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.teal.shade700,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_location_alt_outlined),
+              label: 'Reportar',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              label: 'Historial',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_none),
+              label: 'Notificaciones',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'Perfil',
+            ),
+          ],
+        ),
       ),
     );
   }
