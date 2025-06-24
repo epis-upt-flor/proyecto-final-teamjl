@@ -1,6 +1,5 @@
 <?php ?>
 
-<!-- Tarjetas de resumen -->
 <div class="row text-center mb-4">
   <div class="col-md-4 mb-3">
     <div class="card shadow-sm border-0" style="background-color: #fff3f4;">

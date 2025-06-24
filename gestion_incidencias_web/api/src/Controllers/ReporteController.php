@@ -10,7 +10,6 @@
         public static function estadisticas(?string $inicio = null, ?string $fin = null): void
         {
             try {
-                // Si no viene fecha, usar por defecto
                 $inicio = $inicio ?: ($_GET['inicio'] ?? date('Y-m-01'));
                 $fin    = $fin    ?: ($_GET['fin']    ?? date('Y-m-d'));
 
