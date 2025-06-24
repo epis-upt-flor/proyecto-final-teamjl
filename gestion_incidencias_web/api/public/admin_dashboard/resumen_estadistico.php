@@ -11,6 +11,7 @@
     }
     try {
         $user = Auth::verificarToken($m[1]);
+        
     } catch (\Exception $e) {
         Response::error("Token inválido", 401);
     }

@@ -14,7 +14,6 @@
             return CalendarioRepository::guardarFecha($incidenciaId, $fecha);
         }
 
-        // NUEVO MÉTODO para usar al asignar empleado + prioridad + fecha
         public static function programarAlAsignar(int $incidenciaId, string $fecha): bool
         {
             $fechaActual = date('Y-m-d');

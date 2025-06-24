@@ -7,28 +7,34 @@
 
     class ReporteRepository
     {
-        public static function contarPorEstado(): array
+        public static function contarPorEstado(string $inicio, string $fin): array
         {
             $pdo = Database::getInstance();
             $sql = "
-                    SELECT ei.nombre AS estado, COUNT(*) AS total
-                    FROM incidencia i
-                    INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
-                    GROUP BY ei.nombre
-                ";
-            return $pdo->query($sql)->fetchAll();
+                SELECT ei.nombre AS estado, COUNT(*) AS total
+                FROM incidencia i
+                INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
+                WHERE i.fecha_reporte BETWEEN :inicio AND :fin
+                GROUP BY ei.nombre
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['inicio' => $inicio, 'fin' => $fin]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public static function contarPorTipo(): array
+        public static function contarPorTipo(string $inicio, string $fin): array
         {
             $pdo = Database::getInstance();
             $sql = "
-                    SELECT ti.nombre AS tipo, COUNT(*) AS total
-                    FROM incidencia i
-                    INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
-                    GROUP BY ti.nombre
-                ";
-            return $pdo->query($sql)->fetchAll();
+                SELECT ti.nombre AS tipo, COUNT(*) AS total
+                FROM incidencia i
+                INNER JOIN tipo_incidencia ti ON i.tipo_id = ti.id
+                WHERE i.fecha_reporte BETWEEN :inicio AND :fin
+                GROUP BY ti.nombre
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['inicio' => $inicio, 'fin' => $fin]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         public static function obtenerPorRango(string $inicio, string $fin): array
@@ -51,5 +57,4 @@
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
-
 ?>

@@ -10,7 +10,6 @@
         {
             $pdo = Database::getInstance();
 
-            // Verificar si ya existe
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM calendario_incidencia WHERE incidencia_id = :id");
             $stmt->execute(['id' => $incidenciaId]);
             $existe = $stmt->fetchColumn() > 0;

@@ -25,21 +25,20 @@
 
     try {
         $pdo = Database::getInstance();
+
         $stmtEmp = $pdo->query("
             SELECT id, nombre || ' ' || apellido AS nombre_completo
-            FROM empleado
+            FROM usuario
+            WHERE rol = 'empleado'
             ORDER BY apellido, nombre
         ");
         $empleados = $stmtEmp->fetchAll(\PDO::FETCH_ASSOC);
 
         $data = [];
         foreach ($empleados as $emp) {
-            $incidencias = IncidenciaRepository::obtenerPorEmpleado((int)$emp['id']);
-            $data[] = [
-                'empleado_id' => $emp['id'],
-                'empleado'    => $emp['nombre_completo'],
-                'incidencias' => $incidencias
-            ];
+            $incidencias = IncidenciaRepository::obtenerPorEmpleado(
+                (int)$emp['id'], $inicio, $fin
+            );
         }
 
         Response::success($data, 'Incidencias agrupadas por empleado obtenidas correctamente');
