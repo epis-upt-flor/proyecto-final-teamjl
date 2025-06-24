@@ -6,11 +6,11 @@
 
     class ReporteService
     {
-        public static function obtenerResumen(string $inicio, string $fin): array
+        public static function obtenerResumen(): array
         {
             return [
-                'por_estado' => ReporteRepository::contarPorEstado($inicio, $fin),
-                'por_tipo'   => ReporteRepository::contarPorTipo($inicio, $fin)
+                'por_estado' => ReporteRepository::contarPorEstado(),
+                'por_tipo' => ReporteRepository::contarPorTipo()
             ];
         }
 

@@ -10,9 +10,7 @@
         public static function estadisticas(): void
         {
             try {
-                $inicio = $_GET['inicio'] ?? date('Y-m-01');
-                $fin    = $_GET['fin']    ?? date('Y-m-d');
-                $estadisticas = ReporteService::obtenerResumen($inicio, $fin);
+                $estadisticas = ReporteService::obtenerResumen();
                 Response::success($estadisticas, "Resumen de incidencias");
             } catch (\Exception $e) {
                 Response::error("Error al obtener reporte: " . $e->getMessage(), 500);

@@ -1,135 +1,106 @@
 <?php
-    require_once __DIR__ . '/../config.php';
-    require_once __DIR__ . '/fpdf/fpdf.php';
 
-    session_start();
+  require_once __DIR__ . '/../config.php';
+  require_once __DIR__ . '/fpdf/fpdf.php';
 
-    $inicio = filter_input(INPUT_GET, 'inicio', FILTER_SANITIZE_STRING) ?: date('Y-m-01');
-    $fin    = filter_input(INPUT_GET, 'fin', FILTER_SANITIZE_STRING) ?: date('Y-m-d');
+  $inicio = filter_input(INPUT_GET, 'inicio', FILTER_SANITIZE_STRING) ?: date('Y-m-01');
+  $fin    = filter_input(INPUT_GET, 'fin', FILTER_SANITIZE_STRING) ?: date('Y-m-d');
 
-    $token = $_SESSION['user_token'] ?? '';
+  $urlGrp = API_BASE
+          . "admin_dashboard/incidencias_por_empleado.php"
+          . "?inicio={$inicio}&fin={$fin}";
+  $jsonGrp = @file_get_contents($urlGrp);
+  $dataGrp = json_decode($jsonGrp, true)['data'] ?? [];
 
-    function fetchApiData(string $url, string $token): ?array
-    {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Bearer ' . $token
-            ]
-        ]);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+  $urlEst  = API_BASE
+          . "admin_dashboard/resumen_estadistico.php?inicio={$inicio}&fin={$fin}";
+  $jsonEst = @file_get_contents($urlEst);
+  $dataEst = json_decode($jsonEst, true)['data'] ?? [];
+  $porEstado = $dataEst['por_estado'] ?? [];
+  $porTipo   = $dataEst['por_tipo']   ?? [];
 
-        if ($httpCode !== 200) {
-            file_put_contents(__DIR__ . '/debug_error.txt', "[$httpCode] $response");
-            return null;
-        }
+  function fetchChartImage(string $config, string $out)
+  {
+      $url = 'https://quickchart.io/chart?c=' . rawurlencode($config)
+          . '&width=600&height=300&format=png';
+      if ($img = @file_get_contents($url)) {
+          file_put_contents($out, $img);
+      }
+  }
 
-        $json = json_decode($response, true);
-        if (!isset($json['data'])) {
-            file_put_contents(__DIR__ . '/debug_raw.json', $response);
-            return null;
-        }
+  $configEstado = json_encode([
+    'type' => 'doughnut',
+    'data' => [
+      'labels' => array_map(fn ($e) => $e['estado'], $porEstado),
+      'datasets' => [[
+        'data' => array_map(fn ($e) => $e['total'], $porEstado),
+        'backgroundColor' => ['#dc3545','#ffc107','#28a745','#0dcaf0']
+      ]]
+    ],
+    'options' => ['plugins' => ['legend' => ['position' => 'bottom']]]
+  ]);
+  $configTipo = json_encode([
+    'type' => 'bar',
+    'data' => [
+      'labels' => array_map(fn ($t) => $t['tipo'], $porTipo),
+      'datasets' => [[
+        'label' => 'Cantidad',
+        'data' => array_map(fn ($t) => $t['total'], $porTipo),
+        'backgroundColor' => '#0d6efd'
+      ]]
+    ],
+    'options' => [
+      'scales' => ['y' => ['beginAtZero' => true]],
+      'plugins' => ['legend' => ['display' => false]]
+    ]
+  ]);
 
-        return $json['data'];
-    }
+  $temp1 = __DIR__ . '/chart_estado.png';
+  $temp2 = __DIR__ . '/chart_tipo.png';
+  fetchChartImage($configEstado, $temp1);
+  fetchChartImage($configTipo, $temp2);
 
-    $urlGrp = API_BASE . "admin_dashboard/incidencias_por_empleado.php?inicio={$inicio}&fin={$fin}";
-    $dataGrp = fetchApiData($urlGrp, $token);
+  $pdf = new FPDF();
+  $pdf->AddPage();
 
-    $urlEst = API_BASE . "admin_dashboard/resumen_estadistico.php?inicio={$inicio}&fin={$fin}";
-    $dataEst = fetchApiData($urlEst, $token);
+  $pdf->SetFont('Arial', 'B', 14);
+  $pdf->Cell(0, 10, 'Reporte de Incidencias por Empleado', 0, 1, 'C');
+  $pdf->SetFont('Arial', '', 12);
+  $pdf->Cell(0, 10, "Desde: $inicio   Hasta: $fin", 0, 1);
+  $pdf->Ln(4);
 
-    $porEstado = $dataEst['por_estado'] ?? [];
-    $porTipo   = $dataEst['por_tipo']   ?? [];
+  foreach ($dataGrp as $emp) {
+      $pdf->SetFont('Arial', 'B', 12);
+      $pdf->Cell(0, 8, utf8_decode($emp['empleado']), 0, 1);
+      $pdf->SetFont('Arial', 'B', 10);
+      $pdf->Cell(20, 8, 'ID', 1);
+      $pdf->Cell(50, 8, 'Tipo', 1);
+      $pdf->Cell(40, 8, 'Estado', 1);
+      $pdf->Cell(40, 8, 'Fecha', 1);
+      $pdf->Ln();
+      // Filas
+      $pdf->SetFont('Arial', '', 10);
+      foreach ($emp['incidencias'] as $inc) {
+          $pdf->Cell(20, 8, $inc['id'], 1);
+          $pdf->Cell(50, 8, utf8_decode($inc['tipo']), 1);
+          $pdf->Cell(40, 8, utf8_decode($inc['estado']), 1);
+          $pdf->Cell(40, 8, $inc['fecha_reporte'], 1);
+          $pdf->Ln();
+      }
+      $pdf->Ln(4);
+  }
 
-    function fetchChartImage(string $config, string $out)
-    {
-        $url = 'https://quickchart.io/chart?c=' . rawurlencode($config)
-            . '&width=600&height=300&format=png';
-        if ($img = @file_get_contents($url)) {
-            file_put_contents($out, $img);
-        }
-    }
+  $pdf->AddPage();
+  $pdf->SetFont('Arial', 'B', 14);
+  $pdf->Cell(0, 10, 'Resumen Gráfico', 0, 1, 'C');
+  $pdf->Image($temp1, 15, 30, 180);
+  $pdf->Ln(95);
+  $pdf->Image($temp2, 15, null, 180);
 
-    $configEstado = json_encode([
-        'type' => 'doughnut',
-        'data' => [
-            'labels' => array_map(fn($e) => $e['estado'], $porEstado),
-            'datasets' => [[
-                'data' => array_map(fn($e) => $e['total'], $porEstado),
-                'backgroundColor' => ['#dc3545', '#ffc107', '#28a745', '#0dcaf0']
-            ]]
-        ],
-        'options' => ['plugins' => ['legend' => ['position' => 'bottom']]]
-    ]);
+  @unlink($temp1);
+  @unlink($temp2);
 
-    $configTipo = json_encode([
-        'type' => 'bar',
-        'data' => [
-            'labels' => array_map(fn($t) => $t['tipo'], $porTipo),
-            'datasets' => [[
-                'label' => 'Cantidad',
-                'data' => array_map(fn($t) => $t['total'], $porTipo),
-                'backgroundColor' => '#0d6efd'
-            ]]
-        ],
-        'options' => [
-            'scales' => ['y' => ['beginAtZero' => true]],
-            'plugins' => ['legend' => ['display' => false]]
-        ]
-    ]);
+  $pdf->Output('I', "incidencias_por_empleado_{$inicio}_a_{$fin}.pdf");
+  exit;
 
-    $temp1 = __DIR__ . '/chart_estado.png';
-    $temp2 = __DIR__ . '/chart_tipo.png';
-    fetchChartImage($configEstado, $temp1);
-    fetchChartImage($configTipo, $temp2);
-
-    $pdf = new FPDF();
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 14);
-    $pdf->Cell(0, 10, 'Reporte de Incidencias por Empleado', 0, 1, 'C');
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->Cell(0, 10, "Desde: $inicio   Hasta: $fin", 0, 1);
-    $pdf->Ln(4);
-
-    if (!empty($dataGrp)) {
-        foreach ($dataGrp as $emp) {
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(0, 8, utf8_decode($emp['empleado']), 0, 1);
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(20, 8, 'ID', 1);
-            $pdf->Cell(50, 8, 'Tipo', 1);
-            $pdf->Cell(40, 8, 'Estado', 1);
-            $pdf->Cell(40, 8, 'Fecha', 1);
-            $pdf->Ln();
-
-            $pdf->SetFont('Arial', '', 10);
-            foreach ($emp['incidencias'] as $inc) {
-                $pdf->Cell(20, 8, $inc['id'], 1);
-                $pdf->Cell(50, 8, utf8_decode($inc['tipo']), 1);
-                $pdf->Cell(40, 8, utf8_decode($inc['estado']), 1);
-                $pdf->Cell(40, 8, $inc['fecha_reporte'], 1);
-                $pdf->Ln();
-            }
-            $pdf->Ln(4);
-        }
-    } else {
-        $pdf->SetFont('Arial', 'I', 11);
-        $pdf->Cell(0, 10, 'No hay incidencias registradas en este rango.', 0, 1);
-    }
-
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 14);
-    $pdf->Cell(0, 10, 'Resumen Gráfico', 0, 1, 'C');
-    $pdf->Image($temp1, 15, 30, 180);
-    $pdf->Ln(95);
-    $pdf->Image($temp2, 15, null, 180);
-
-    @unlink($temp1);
-    @unlink($temp2);
-    $pdf->Output('I', "incidencias_por_empleado_{$inicio}_a_{$fin}.pdf");
-    exit;
 ?>

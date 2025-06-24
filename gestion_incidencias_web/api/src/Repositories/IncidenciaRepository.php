@@ -91,7 +91,7 @@
             }
         }
 
-        public static function obtenerPorEmpleado(int $usuarioId, ?string $inicio = null, ?string $fin = null): array
+        public static function obtenerPorEmpleado(int $empleadoId): array
         {
             $pdo = Database::getInstance();
 
@@ -112,25 +112,14 @@
                 INNER JOIN estado_incidencia ei ON i.estado_id = ei.id
                 LEFT JOIN prioridad          pr ON i.prioridad_id = pr.id
                 LEFT JOIN calendario_incidencia c ON i.id = c.incidencia_id
-                WHERE i.asignado_a = :usuario_id
+                WHERE i.asignado_a = :empleado_id
+                ORDER BY i.fecha_reporte ASC
             ";
 
-            $params = ['usuario_id' => $usuarioId];
-
-            if ($inicio && $fin) {
-                $sql .= " AND i.fecha_reporte BETWEEN :inicio AND :fin";
-                $params['inicio'] = $inicio;
-                $params['fin'] = $fin;
-            }
-
-            $sql .= " ORDER BY i.fecha_reporte ASC";
-
             $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-
+            $stmt->execute(['empleado_id' => $empleadoId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-
 
         public static function actualizarEstado(int $incidenciaId, int $nuevoEstado): bool
         {
