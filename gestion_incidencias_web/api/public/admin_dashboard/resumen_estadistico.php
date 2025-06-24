@@ -18,5 +18,7 @@
         Response::error("Permiso denegado", 403);
     }
 
+    $inicio = $_GET['inicio'] ?? null;
+    $fin    = $_GET['fin'] ?? null;
     ReporteController::estadisticas();
 ?>

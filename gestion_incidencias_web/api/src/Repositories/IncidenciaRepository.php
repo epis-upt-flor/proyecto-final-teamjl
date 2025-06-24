@@ -91,7 +91,7 @@
             }
         }
 
-        public static function obtenerPorEmpleado(int $empleadoId): array
+        public static function obtenerPorEmpleado(int $empleadoId, ?string $inicio = null, ?string $fin = null): array
         {
             $pdo = Database::getInstance();
 
@@ -113,11 +113,20 @@
                 LEFT JOIN prioridad          pr ON i.prioridad_id = pr.id
                 LEFT JOIN calendario_incidencia c ON i.id = c.incidencia_id
                 WHERE i.asignado_a = :empleado_id
-                ORDER BY i.fecha_reporte ASC
             ";
 
+            $params = ['empleado_id' => $empleadoId];
+
+            if ($inicio && $fin) {
+                $sql .= " AND i.fecha_reporte BETWEEN :inicio AND :fin";
+                $params['inicio'] = $inicio;
+                $params['fin'] = $fin;
+            }
+
+            $sql .= " ORDER BY i.fecha_reporte ASC";
+
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['empleado_id' => $empleadoId]);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 

@@ -7,10 +7,14 @@
 
     class ReporteController
     {
-        public static function estadisticas(): void
+        public static function estadisticas(?string $inicio = null, ?string $fin = null): void
         {
             try {
-                $estadisticas = ReporteService::obtenerResumen();
+                // Si no viene fecha, usar por defecto
+                $inicio = $inicio ?: ($_GET['inicio'] ?? date('Y-m-01'));
+                $fin    = $fin    ?: ($_GET['fin']    ?? date('Y-m-d'));
+
+                $estadisticas = ReporteService::obtenerResumen($inicio, $fin);
                 Response::success($estadisticas, "Resumen de incidencias");
             } catch (\Exception $e) {
                 Response::error("Error al obtener reporte: " . $e->getMessage(), 500);
@@ -42,5 +46,4 @@
             exit;
         }
     }
-
 ?>

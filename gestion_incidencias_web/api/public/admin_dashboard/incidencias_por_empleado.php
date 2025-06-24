@@ -15,7 +15,7 @@
     } catch (\Exception $e) {
         Response::error("Token inválido", 401);
     }
-    if (($user['rol'] ?? '') !== 'administrador') {
+    if (($user['role'] ?? '') !== 'administrador') {
         Response::error("Permiso denegado", 403);
     }
 
@@ -23,18 +23,23 @@
         Response::error('Método no permitido', 405);
     }
 
+    $inicio = $_GET['inicio'] ?? null;
+    $fin    = $_GET['fin'] ?? null;
+
     try {
         $pdo = Database::getInstance();
+
         $stmtEmp = $pdo->query("
             SELECT id, nombre || ' ' || apellido AS nombre_completo
-            FROM empleado
+            FROM usuario
+            WHERE rol = 'empleado'
             ORDER BY apellido, nombre
         ");
         $empleados = $stmtEmp->fetchAll(\PDO::FETCH_ASSOC);
 
         $data = [];
         foreach ($empleados as $emp) {
-            $incidencias = IncidenciaRepository::obtenerPorEmpleado((int)$emp['id']);
+            $incidencias = IncidenciaRepository::obtenerPorEmpleado((int)$emp['id'], $inicio, $fin);
             $data[] = [
                 'empleado_id' => $emp['id'],
                 'empleado'    => $emp['nombre_completo'],
