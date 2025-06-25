@@ -23,16 +23,6 @@
       <?php endforeach; ?>
     </select>
   </div>
-  <div class="col-md-3">
-    <select id="filtro-empleado" class="form-select form-select-sm border-primary shadow-sm">
-      <option value="">Empleado asignado...</option>
-      <?php foreach ($empleados as $e): ?>
-        <option value="<?= htmlspecialchars($e['nombre'] . ' ' . $e['apellido']) ?>">
-          <?= htmlspecialchars($e['nombre'] . ' ' . $e['apellido']) ?>
-        </option>
-      <?php endforeach; ?>
-    </select>
-  </div>
   <div class="col-md-4 d-flex">
     <input type="date" id="fecha-desde" class="form-control form-control-sm me-2 border-primary shadow-sm" placeholder="Desde">
     <input type="date" id="fecha-hasta" class="form-control form-control-sm border-primary shadow-sm" placeholder="Hasta">
