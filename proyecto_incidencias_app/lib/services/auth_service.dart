@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 
 class AuthService {
-  // Método para iniciar sesión (empleados)
+  // Método para iniciar sesión (empleados y admins vía login.php)
   static Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('${baseUrl}api_empleados/login.php');
+    final url = Uri.parse('${baseUrl}login.php');
 
     try {
       developer.log('Intentando iniciar sesión con: $email', name: 'AuthService');
@@ -30,9 +30,9 @@ class AuthService {
     }
   }
 
-  // Método para registrar un nuevo empleado
+  // Método para registrar un nuevo empleado (usando register.php)
   static Future<Map<String, dynamic>> register(String dni, String name, String surname, String email, String password) async {
-    final url = Uri.parse('${baseUrl}api_empleados/registrar.php');
+    final url = Uri.parse('${baseUrl}register.php');
 
     try {
       developer.log('Intentando registrar a: $dni $name $surname', name: 'AuthService');
@@ -46,6 +46,7 @@ class AuthService {
           'apellido': surname,
           'email': email,
           'password': password,
+          'role': 'empleado'
         }),
       );
 

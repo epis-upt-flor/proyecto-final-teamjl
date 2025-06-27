@@ -25,18 +25,18 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
     final List<Widget> screens = <Widget>[
       ReportarScreen(ciudadanoId: widget.user['id_celular']),
       HistorialScreen(ciudadanoId: widget.user['id_celular']),
-      const Center(
-        child: Text(
-          'Notificaciones',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      const Center(
-        child: Text(
-          'Perfil',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      // const Center(
+      //   child: Text(
+      //     'Notificaciones',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      // ),
+      // const Center(
+      //   child: Text(
+      //     'Perfil',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      // ),
     ];
 
     return Container(
@@ -50,33 +50,39 @@ class _CiudadanoHomeState extends State<CiudadanoHome> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(child: screens[_selectedIndex]),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.teal.shade700,
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: true,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_location_alt_outlined),
-              label: 'Reportar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: 'Historial',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none),
-              label: 'Notificaciones',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Perfil',
-            ),
-          ],
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF1F1F3C),
+            border: Border(top: BorderSide(color: Colors.white12, width: 0.5)),
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            selectedItemColor: Colors.tealAccent.shade400,
+            unselectedItemColor: Colors.white60,
+            showUnselectedLabels: true,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_location_alt_outlined),
+                label: 'Reportar',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history),
+                label: 'Historial',
+              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.notifications_none),
+              //   label: 'Notificaciones',
+              // ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.person_outline),
+              //   label: 'Perfil',
+              // ),
+            ],
+          ),
         ),
       ),
     );

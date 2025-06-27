@@ -20,9 +20,10 @@ class _EmpleadoScreenState extends State<EmpleadoScreen> {
     super.initState();
     _screens = [
       TareasScreen(user: widget.user),
-      const Center(child: Text('Completadas', style: TextStyle(color: Colors.white))),
-      const Center(child: Text('Notificaciones', style: TextStyle(color: Colors.white))),
-      const Center(child: Text('Perfil', style: TextStyle(color: Colors.white))),
+      const Center(child: Text('Próximamente', style: TextStyle(color: Colors.white))),
+      // const Center(child: Text('Completadas', style: TextStyle(color: Colors.white))),
+      // const Center(child: Text('Notificaciones', style: TextStyle(color: Colors.white))),
+      // const Center(child: Text('Perfil', style: TextStyle(color: Colors.white))),
     ];
   }
 
@@ -64,17 +65,21 @@ class _EmpleadoScreenState extends State<EmpleadoScreen> {
                 label: 'Tareas',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.check_circle),
-                label: 'Completadas',
+                icon: Icon(Icons.lock_outline),
+                label: 'Próximamente',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notifications_none),
-                label: 'Notificaciones',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                label: 'Perfil',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.check_circle),
+              //   label: 'Completadas',
+              // ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.notifications_none),
+              //   label: 'Notificaciones',
+              // ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.person_outline),
+              //   label: 'Perfil',
+              // ),
             ],
           ),
         ),
