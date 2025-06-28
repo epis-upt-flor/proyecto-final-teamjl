@@ -176,18 +176,16 @@
   document.addEventListener('DOMContentLoaded', () => {
     const inputBusqueda = document.getElementById('busqueda');
     const filtroPrioridad = document.getElementById('filtro-prioridad');
-    const filtroEmpleado = document.getElementById('filtro-empleado');
     const fechaDesde = document.getElementById('fecha-desde');
     const fechaHasta = document.getElementById('fecha-hasta');
 
-    [inputBusqueda, filtroPrioridad, filtroEmpleado, fechaDesde, fechaHasta].forEach(el =>
+    [inputBusqueda, filtroPrioridad, fechaDesde, fechaHasta].forEach(el =>
       el.addEventListener('input', filtrarTabla)
     );
 
     function filtrarTabla() {
       const texto = inputBusqueda.value.toLowerCase();
       const prioridad = filtroPrioridad.value.toLowerCase();
-      const empleado = filtroEmpleado.value.toLowerCase();
       const desde = fechaDesde.value;
       const hasta = fechaHasta.value;
 
@@ -200,7 +198,6 @@
         const tipo = celdas[1]?.textContent.toLowerCase();
         const prio = celdas[3]?.textContent.toLowerCase();
         const fecha = celdas[6]?.textContent.trim();
-        const empTexto = fila.querySelector('select[id^=select-emp-] option:checked')?.textContent.toLowerCase() || '';
 
         let visible = true;
 
@@ -209,10 +206,6 @@
         }
 
         if (prioridad && !prio.includes(prioridad)) {
-          visible = false;
-        }
-
-        if (empleado && !empTexto.includes(empleado)) {
           visible = false;
         }
 
