@@ -43,10 +43,6 @@ $title = 'Reportes Estadísticos';
      class="btn btn-outline-success shadow-sm fw-semibold">
     📄 Exportar PDF por Empleado
   </a>
-  <a href="<?= url('reporte/exportExcel') . "&inicio={$inicio}&fin={$fin}" ?>"
-     class="btn btn-outline-secondary shadow-sm fw-semibold">
-    📊 Exportar Excel por Empleado
-  </a>
 </div>
 
 <script>

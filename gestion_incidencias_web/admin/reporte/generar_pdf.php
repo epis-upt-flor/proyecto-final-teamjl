@@ -1,119 +1,113 @@
 <?php
-    require_once __DIR__ . '/../config.php';
-    require_once __DIR__ . '/fpdf/fpdf.php';
+session_start();
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/fpdf/fpdf.php';
 
-    $inicio = filter_input(INPUT_GET, 'inicio', FILTER_SANITIZE_STRING) ?: date('Y-m-01');
-    $fin    = filter_input(INPUT_GET, 'fin', FILTER_SANITIZE_STRING) ?: date('Y-m-d');
+$token = $_SESSION['user_token'] ?? '';
+if (!$token) {
+    exit('Token no encontrado');
+}
 
-    $token = $_SESSION['token'] ?? '';
-
-    function fetchApiData($url, $token)
-    {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer $token"
-            ]
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return json_decode($response, true)['data'] ?? [];
-    }
-
-    $urlGrp = API_BASE . "admin_dashboard/incidencias_por_empleado.php?inicio={$inicio}&fin={$fin}";
-    $dataGrp = fetchApiData($urlGrp, $token);
-
-    $urlEst = API_BASE . "admin_dashboard/resumen_estadistico.php?inicio={$inicio}&fin={$fin}";
-    $dataEst = fetchApiData($urlEst, $token);
-    $porEstado = $dataEst['por_estado'] ?? [];
-    $porTipo   = $dataEst['por_tipo'] ?? [];
-
-    function fetchChartImage(string $config, string $out)
-    {
-        $url = 'https://quickchart.io/chart?c=' . rawurlencode($config)
-            . '&width=600&height=300&format=png';
-        if ($img = @file_get_contents($url)) {
-            file_put_contents($out, $img);
-        }
-    }
-
-    $configEstado = json_encode([
-        'type' => 'doughnut',
-        'data' => [
-            'labels' => array_map(fn($e) => $e['estado'], $porEstado),
-            'datasets' => [[
-                'data' => array_map(fn($e) => $e['total'], $porEstado),
-                'backgroundColor' => ['#dc3545', '#ffc107', '#28a745', '#0dcaf0']
-            ]]
-        ],
-        'options' => ['plugins' => ['legend' => ['position' => 'bottom']]]
+function fetchApiData($url, $token)
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => ["Authorization: Bearer $token"]
     ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true)['data'] ?? [];
+}
 
-    $configTipo = json_encode([
-        'type' => 'bar',
-        'data' => [
-            'labels' => array_map(fn($t) => $t['tipo'], $porTipo),
-            'datasets' => [[
-                'label' => 'Cantidad',
-                'data' => array_map(fn($t) => $t['total'], $porTipo),
-                'backgroundColor' => '#0d6efd'
-            ]]
-        ],
-        'options' => [
-            'scales' => ['y' => ['beginAtZero' => true]],
-            'plugins' => ['legend' => ['display' => false]]
-        ]
-    ]);
+$url = API_BASE . 'admin_dashboard/incidencias.php';
+$incidencias = fetchApiData($url, $token);
 
-    $temp1 = __DIR__ . '/chart_estado.png';
-    $temp2 = __DIR__ . '/chart_tipo.png';
-    fetchChartImage($configEstado, $temp1);
-    fetchChartImage($configTipo, $temp2);
-
-    $pdf = new FPDF();
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 14);
-    $pdf->Cell(0, 10, 'Reporte de Incidencias por Empleado', 0, 1, 'C');
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->Cell(0, 10, "Desde: $inicio   Hasta: $fin", 0, 1);
-    $pdf->Ln(4);
-
-    if (!empty($dataGrp)) {
-        foreach ($dataGrp as $emp) {
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(0, 8, utf8_decode($emp['empleado']), 0, 1);
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(20, 8, 'ID', 1);
-            $pdf->Cell(50, 8, 'Tipo', 1);
-            $pdf->Cell(40, 8, 'Estado', 1);
-            $pdf->Cell(40, 8, 'Fecha', 1);
-            $pdf->Ln();
-
-            $pdf->SetFont('Arial', '', 10);
-            foreach ($emp['incidencias'] as $inc) {
-                $pdf->Cell(20, 8, $inc['id'], 1);
-                $pdf->Cell(50, 8, utf8_decode($inc['tipo']), 1);
-                $pdf->Cell(40, 8, utf8_decode($inc['estado']), 1);
-                $pdf->Cell(40, 8, $inc['fecha_reporte'], 1);
-                $pdf->Ln();
-            }
-            $pdf->Ln(4);
-        }
-    } else {
-        $pdf->SetFont('Arial', 'I', 11);
-        $pdf->Cell(0, 10, 'No hay incidencias registradas en este rango.', 0, 1);
+class PDF extends FPDF
+{
+    function Header()
+    {
+        if ($this->PageNo() === 1) return;
+        $this->SetFont('Times', 'B', 12);
+        $this->Cell(0, 10, utf8_decode('Listado de Incidencias'), 0, 1, 'C');
+        $this->Ln(2);
     }
 
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 14);
-    $pdf->Cell(0, 10, 'Resumen Gráfico', 0, 1, 'C');
-    $pdf->Image($temp1, 15, 30, 180);
-    $pdf->Ln(95);
-    $pdf->Image($temp2, 15, null, 180);
+    function Footer()
+    {
+        if ($this->PageNo() === 1) return;
+        $this->SetY(-15);
+        $this->SetFont('Times', 'I', 9);
+        $this->Cell(0, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'C');
+    }
+}
 
-    @unlink($temp1);
-    @unlink($temp2);
-    $pdf->Output('I', "incidencias_por_empleado_{$inicio}_a_{$fin}.pdf");
-    exit;
-?>
+$pdf = new PDF();
+$pdf->AddPage();
+
+$pdf->SetFont('Times', 'B', 20);
+$pdf->Ln(60);
+$pdf->Cell(0, 10, utf8_decode('Sistema Web de Gestión de Incidencias'), 0, 1, 'C');
+$pdf->Ln(10);
+$pdf->SetFont('Times', '', 16);
+$pdf->Cell(0, 10, utf8_decode('Reporte General de Incidencias'), 0, 1, 'C');
+$pdf->Ln(80);
+$pdf->SetFont('Times', 'I', 12);
+$pdf->Cell(0, 10, utf8_decode('Fecha de generación: ') . date('d/m/Y H:i'), 0, 1, 'C');
+
+$pdf->AddPage();
+$pdf->SetFont('Times', 'B', 11);
+$pdf->Cell(0, 10, utf8_decode('Listado de Incidencias'), 0, 1, 'C');
+$pdf->Ln(2);
+
+$headers = ['ID', 'Tipo', 'Estado', 'Prioridad', 'Descripción', 'Ubicación'];
+$widths = [10, 35, 28, 25, 60, 35];
+foreach ($headers as $i => $col) {
+    $pdf->Cell($widths[$i], 10, utf8_decode($col), 1, 0, 'C');
+}
+$pdf->Ln();
+
+$pdf->SetFont('Times', '', 10);
+
+function getMaxHeight($pdf, $row, $widths)
+{
+    $max = 0;
+    foreach ($row as $i => $text) {
+        $nb = $pdf->GetStringWidth($text) / ($widths[$i] - 2);
+        $height = ceil($nb) * 5;
+        $max = max($max, $height);
+    }
+    return max($max, 8);
+}
+
+foreach ($incidencias as $inc) {
+    $row = [
+        $inc['id'],
+        utf8_decode($inc['tipo']),
+        utf8_decode($inc['estado']),
+        $inc['prioridad'] ? utf8_decode($inc['prioridad']) : '—',
+        utf8_decode($inc['descripcion']),
+        $inc['latitud'] . ', ' . $inc['longitud']
+    ];
+
+    $maxHeight = getMaxHeight($pdf, $row, $widths);
+    $x = $pdf->GetX();
+    $y = $pdf->GetY();
+
+    for ($i = 0; $i < count($row); $i++) {
+        $pdf->SetXY($x, $y);
+        $pdf->MultiCell($widths[$i], 5, $row[$i], 1, 'L');
+        $x += $widths[$i];
+        $pdf->SetXY($x, $y);
+    }
+    $pdf->Ln($maxHeight);
+}
+
+if (empty($incidencias)) {
+    $pdf->Ln(10);
+    $pdf->SetFont('Times', 'I', 11);
+    $pdf->Cell(0, 10, utf8_decode('No se encontraron incidencias.'), 0, 1);
+}
+
+$pdf->Output('I', 'reporte_incidencias.pdf');
+exit;
