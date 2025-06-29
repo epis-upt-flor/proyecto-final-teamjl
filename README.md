@@ -8,7 +8,7 @@ Castañeda Centurión, Jorge Enrique (2021069822)
 Hurtado Ortiz, Leandro (2015052384)
 
 ---
-Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una aplicación móvil desarrollada en Flutter, mientras que los administradores y empleados gestionan estos reportes desde un panel web desarrollado en PHP. El sistema está integrado con una base de datos PostgreSQL y cuenta con autenticación JWT y arquitectura desacoplada (MVC + Service Layer + API REST).
+Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una aplicación móvil desarrollada en Flutter, mientras que los administradores y empleados gestionan estos reportes desde un panel web desarrollado en PHP. El sistema está integrado con una base de datos PostgreSQL y cuenta con autenticación JWT y arquitectura Service Layer + MVVM.
 
 ---
 
