@@ -23,8 +23,8 @@ Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una ap
 - 🔄 Actualización de estado de incidencias
 
 ### Capturas:
-<img src="assets/screenshots/app_ciudadano.png" alt="Dashboard de incidencias" width="600"/>
-<img src="assets/screenshots/app_empleado.png" alt="Dashboard de incidencias" width="600"/>
+<img src="assets/screenshots/app_ciudadano.png" alt="Dashboard de incidencias" width="300"/>
+<img src="assets/screenshots/app_empleado.png" alt="Dashboard de incidencias" width="300"/>
 
 ---
 
