@@ -23,8 +23,8 @@ Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una ap
 - 🔄 Actualización de estado de incidencias
 
 ### Capturas:
-![Reporte de incidencia](assets/screenshots/app_ciudadano.png)
-![Tareas asignadas al empleado](assets/screenshots/app_empleado.png)
+<img src="assets/screenshots/app_ciudadano.png" alt="Dashboard de incidencias" width="600"/>
+<img src="assets/screenshots/app_empleado.png" alt="Dashboard de incidencias" width="600"/>
 
 ---
 
@@ -39,8 +39,9 @@ Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una ap
 - 📈 Visualización de estadísticas con gráficos
 
 ### Capturas:
-![Dashboard de incidencias](assets/screenshots/web_dashboard.png)
-![Formulario de asignación](assets/screenshots/web_asignacion.png)
+<img src="assets/screenshots/web_dashboard.png" alt="Dashboard de incidencias" width="600"/>
+
+<img src="assets/screenshots/web_asignacion.png" alt="Formulario de asignación" width="600"/>
 
 ---
 
@@ -226,10 +227,10 @@ lib/
 | Tipo de prueba          | Herramienta         | Estado       |
 |-------------------------|---------------------|--------------|
 | Funcionales UI/E2E      | `flutter_test`      | ✅ Completado |
-| Pruebas Unitarias       | `Apache Bench (ab)` | ✅ Completado |
+| Pruebas Unitarias       | `PHPUnit` | ✅ Completado |
 | Validación de formularios | `Flutter y PHP`   | ✅ Completado |
 | Análisis estático PHP   | `PHPStan nivel máximo`    | ✅ Completado |
-| Análisis estático Flutter   | `flutter analyze`       | ✅ Completado  |
+| Rendimiento             | `Apache Bench`      | ✅ Completado |
 
 ---
 
@@ -247,12 +248,13 @@ cd proyecto-final-teamjl
 ## 🗄️ Base de Datos
 
 - PostgreSQL con las tablas:
-  - `usuario` (rol: administrador, empleado)
+  - `usuario`
   - `ciudadano`
   - `incidencia`
   - `calendario_incidencia`
+  - `estado_incidencia`
+  - `historial_estado`
   - `tipo_incidencia`
-  - `estado`
   - `prioridad`
 
 ---
@@ -262,13 +264,12 @@ cd proyecto-final-teamjl
 | Módulo / Requerimiento               | Estado        |
 |--------------------------------------|---------------|
 | RF-01 Reporte de incidencias         | ✅ Implementado |
-| RF-02 Login y autenticación          | ✅ Implementado |
-| RF-04 Gestión de tareas asignadas    | ✅ Implementado |
-| RF-05 Dashboard administrativo       | ✅ Implementado |
-| RF-07 Calendario de resolución       | ✅ Implementado |
-| RF-08 Historial ciudadano            | ✅ Implementado |
-| Reportes PDF y Excel                 | ✅ Implementado |
-| Validación de roles y permisos       | ✅ Implementado |
+| RF-02 Autenticación de Usuarios      | ✅ Implementado |
+| RF-03 Roles de Usuario               | ✅ Implementado |
+| RF-04 Monitoreo y Actualización de Incidencias       | ✅ Implementado |
+| RF-05 Gestión del Dashboard          | ✅ Implementado |
+| RF-06 Generación de Reportes         | ✅ Implementado |
+| RF-07 Visualización de otras incidencias | ✅ Implementado |
 
 ---
 
@@ -276,12 +277,6 @@ cd proyecto-final-teamjl
 
 Desarrollado por el equipo de desarrollo del proyecto académico.
 
-**Correo**: jorcastaneda@upt.pe /   
-**Teléfono**: +51 123-456-789  
-**Sitio web**: [www.incidencias-tacna.pe](http://www.incidencias-tacna.pe)
-
+**Correo**: jorcastaneda@upt.pe y lh2015052384@virtual.upt.pe   
+**Teléfono**: +51 991 130 891 y +51 952 006 312
 ---
-
-## 📝 Licencia
-
-Este proyecto es de código abierto para fines académicos y puede ser adaptado con fines educativos o gubernamentales, siempre que se dé el crédito correspondiente.
