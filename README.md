@@ -162,7 +162,7 @@ Poner la estructura aquí
 
 ## ⚙️ Tecnologías y Herramientas
 
-### Backend – PHP
+### PHP
 - PHP 8+
 - **Composer** 
 - **PHPStan** (análisis estático de código – nivel máximo)
@@ -170,7 +170,7 @@ Poner la estructura aquí
 - Dotenv para variables de entorno
 - PostgreSQL
 
-### Frontend – Flutter
+### Flutter
 - Poner tecnologías y herramientas aquí
 
 ---
