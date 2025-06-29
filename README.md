@@ -46,7 +46,7 @@ Este proyecto permite a los ciudadanos reportar incidencias urbanas desde una ap
 
 ## 🧩 Estructura del Proyecto
 ## Web PHP
-### Frotend:
+### Frontend:
 ```
 admin/
 │
@@ -156,7 +156,45 @@ api/
 ```
 
 ## Flutter
-Poner la estructura aquí
+### Estructura:
+```
+lib/
+├── models/
+│   ├── incidencia_model.dart
+│   ├── tipo_incidencia_model.dart
+│   └── usuario_model.dart
+│
+├── services/
+│   ├── auth_service.dart
+│   ├── incidencia_service.dart
+│   └── incidencias_empleado_service.dart
+│
+├── viewmodels/
+│   ├── detalle_incidencia_viewmodel.dart
+│   ├── historial_viewmodel.dart
+│   ├── login_viewmodel.dart
+│   ├── phone_input_viewmodel.dart
+│   ├── register_viewmodel.dart
+│   ├── reportar_viewmodel.dart
+│   └── tareas_viewmodel.dart
+│
+├── views/
+│   ├── ciudadano_home.dart
+│   ├── detalle_incidencia_screen.dart
+│   ├── empleado_screen.dart
+│   ├── historial_screen.dart
+│   ├── login_screen.dart
+│   ├── notification_screen.dart
+│   ├── phone_input_screen.dart
+│   ├── profile_screen.dart
+│   ├── register_screen.dart
+│   ├── reportar_screen.dart
+│   ├── tareas_screen.dart
+│   └── tasks_screen.dart
+│
+├── config.dart
+└── main.dart
+```
 
 ---
 
@@ -171,7 +209,15 @@ Poner la estructura aquí
 - PostgreSQL
 
 ### Flutter
-- Poner tecnologías y herramientas aquí
+- Flutter SDK 3.5.0
+- Dart 3.5.4
+- http (consumo de APIs REST)
+- google_maps_flutter (integración de mapas)
+- geocoding (obtención de ubicación GPS)
+- image_picker (captura/selección de imágenes)
+- provider (Arquitectura MVVM)
+- flutter_test (pruebas funcionales)
+- flutter analyze (análisis estático de código Dart)
 
 ---
 
@@ -183,6 +229,7 @@ Poner la estructura aquí
 | Pruebas Unitarias       | `Apache Bench (ab)` | ✅ Completado |
 | Validación de formularios | `Flutter y PHP`   | ✅ Completado |
 | Análisis estático PHP   | `PHPStan nivel máximo`    | ✅ Completado |
+| Análisis estático Flutter   | `flutter analyze`       | ✅ Completado  |
 
 ---
 
